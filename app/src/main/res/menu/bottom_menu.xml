@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@id/mainFragment"
+        android:title="@string/menu_home"
+        android:icon="@drawable/ic_baseline_home_24" />
+    <item android:id="@id/productsFragment"
+        android:title="@string/menu_products"
+        android:icon="@drawable/ic_baseline_fastfood_24" />
+    <item android:id="@id/burnEventsFragment"
+        android:title="@string/menu_events"
+        android:icon="@drawable/ic_baseline_event_available_24" />
+    <item android:id="@id/profileFragment"
+        android:title="@string/menu_profile"
+        android:icon="@drawable/ic_baseline_settings_24" />
+</menu>

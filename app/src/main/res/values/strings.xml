@@ -1,4 +1,49 @@
 <resources>
     <string name="app_name">BurnThisCalories</string>
     <string name="welcome_to_app">Welcome to Burn This Calories!</string>
+    <string name="name">имя</string>
+    <string name="height">рост</string>
+    <string name="weight">вес</string>
+    <string name="age">возраст</string>
+    <string name="sex">пол</string>
+    <string name="accept">принять</string>
+    <string name="delete">удалить</string>
+    <string name="go">начать</string>
+    <string name="calories">калории</string>
+    <string name="distance">расстояние</string>
+    <string name="timer">timer</string>
+    <string name="run_type">run type</string>
+    <string name="walking">пешком</string>
+    <string name="running">бегом</string>
+    <string name="bicycle">на велосипеде</string>
+    <string name="to_main">на главную</string>
+    <string name="to_burn_event_in_progress">К событию</string>
+    <string name="set_product">выбрать продукты</string>
+    <string name="burn_service_descr">Расчет сжигания калорий</string>
+
+    <string name="product_name">название</string>
+    <string name="product_category">категория</string>
+    <string name="product_description">описание</string>
+    <string name="product_calory">калорий</string>
+
+    <string name="menu_home">главная</string>
+    <string name="menu_products">продукты</string>
+    <string name="menu_events">эвенты</string>
+    <string name="menu_profile">настройки</string>
+
+    <string name="male">мужчина</string>
+    <string name="female">женщина</string>
+
+    <string name="sm">см</string>
+    <string name="kg">кг</string>
+    <string name="kcal">ккал</string>
+
+    <string name="argument_flag">flag</string>
+    <string name="argument_product_id">productId</string>
+    <string name="argument_burn_event_id">burnEventId</string>
+    <string name="name_aleady_exist">такое имя уже существует</string>
+
+    <string name="burn_event_status_done">Выполнено</string>
+    <string name="burn_event_status_in_progress">Выполняется</string>
+    <string name="burn_event_not_found">BurnEvent не найден</string>
 </resources>

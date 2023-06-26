@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.ekochkov.burnthiscalories.view.fragments.MainFragment"
+        android:label="MainFragment" >
+        <action
+            android:id="@+id/action_mainFragment_to_productsFragment"
+            app:destination="@id/productsFragment"/>
+        <action
+            android:id="@+id/action_mainFragment_to_burnEventFragment"
+            app:destination="@id/burnEventFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.ekochkov.burnthiscalories.view.fragments.ProfileFragment"
+        android:label="ProfileFragment">
+    </fragment>
+    <fragment
+        android:id="@+id/productsFragment"
+        android:name="com.ekochkov.burnthiscalories.view.fragments.ProductsFragment"
+        android:label="ProductsFragment">
+        <action
+            android:id="@+id/action_productsFragment_to_newProductFragment"
+            app:destination="@id/productFragment" />
+        <action
+            android:id="@+id/action_productsFragment_to_changeProductFragment"
+            app:destination="@id/productFragment" />
+        <argument
+            android:name="flag"
+            app:argType="integer"
+            android:defaultValue="-1"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/productFragment"
+        android:name="com.ekochkov.burnthiscalories.view.fragments.ProductFragment"
+        android:label="NewProductFragment">
+        <argument
+            android:name="productId"
+            app:argType="integer"
+            android:defaultValue="-1"/>
+        </fragment>
+
+    <fragment
+        android:id="@+id/burnEventsFragment"
+        android:name="com.ekochkov.burnthiscalories.view.fragments.BurnEventsFragment"
+        android:label="BurnEventsFragment" >
+        <action
+            android:id="@+id/action_burnEventsFragment_to_burnEventFragment"
+            app:destination="@id/burnEventFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/burnEventFragment"
+        android:name="com.ekochkov.burnthiscalories.view.fragments.BurnEventFragment"
+        android:label="BurnEventFragment">
+        <argument
+            android:name="burnEventId"
+            app:argType="integer"
+            android:defaultValue="-1"/>
+    </fragment>
+</navigation>

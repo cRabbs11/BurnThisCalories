@@ -83,6 +83,17 @@ class MainFragment: Fragment() {
         viewModel.burnListLiveData.observe(viewLifecycleOwner) {
             Log.d("BMTH", "products: ${it.size}")
             updateRecyclerView(it)
+            if (it.isNotEmpty()) {
+                var allCalories = 0
+                it.forEach { product ->
+                    allCalories+=product.calory
+                }
+                val allCaloriesText = "${allCalories} ккал"
+                binding.allCalories.text = allCaloriesText
+                binding.allCalories.visibility = View.VISIBLE
+            } else {
+                binding.allCalories.visibility = View.GONE
+            }
         }
 
         binding.addProductBtn.setOnClickListener {

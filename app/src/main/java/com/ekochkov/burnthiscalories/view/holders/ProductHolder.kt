@@ -11,7 +11,8 @@ class ProductHolder(private val binding: ItemProductBinding) : RecyclerView.View
     fun bind(product: Product, clickListener: OnItemClickListener<Product>) {
         binding.name.text = product.name
         binding.description.text = product.description
-        binding.calory.text = product.calory.toString()
+        val calory = "${product.calory} ккал"
+        binding.calory.text = calory
         binding.root.setOnClickListener {
             clickListener.onItemClick(product)
         }

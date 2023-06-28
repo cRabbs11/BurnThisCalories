@@ -59,13 +59,13 @@ class MainFragment: Fragment() {
         viewModel.profileStatusLiveData.observe(viewLifecycleOwner) {
             if (it==Constants.PROFILE_IS_NOT_FILLED) {
                 binding.startBtn.isEnabled = false
-                binding.setProductBtn.isEnabled = false
+                binding.addProductBtn.isEnabled = false
             } else if (burnEventStatus==Constants.BURN_EVENT_STATUS_IN_PROGRESS) {
                 binding.startBtn.isEnabled = false
-                binding.setProductBtn.isEnabled = false
+                binding.addProductBtn.isEnabled = false
             } else {
                 binding.startBtn.isEnabled = true
-                binding.setProductBtn.isEnabled = true
+                binding.addProductBtn.isEnabled = true
             }
         }
 
@@ -85,7 +85,7 @@ class MainFragment: Fragment() {
             updateRecyclerView(it)
         }
 
-        binding.setProductBtn.setOnClickListener {
+        binding.addProductBtn.setOnClickListener {
             val actionToProducts = MainFragmentDirections.actionMainFragmentToProductsFragment()
             actionToProducts.flag = FLAG_ADD_PRODUCTS_TO_BURN_EVENT
             findNavController().navigate(actionToProducts)
@@ -145,11 +145,11 @@ class MainFragment: Fragment() {
         burnEventStatus = burnEvent.eventStatus
         if (burnEventStatus==Constants.BURN_EVENT_STATUS_IN_PROGRESS) {
             binding.startBtn.isEnabled = false
-            binding.setProductBtn.isEnabled = false
+            binding.addProductBtn.isEnabled = false
             binding.toBurnEventBtn.visibility = View.VISIBLE
         } else {
             binding.startBtn.isEnabled = true
-            binding.setProductBtn.isEnabled = true
+            binding.addProductBtn.isEnabled = true
             binding.toBurnEventBtn.visibility = View.GONE
         }
     }

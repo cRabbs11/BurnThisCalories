@@ -4,6 +4,7 @@
     <dimen name="margin_16">16dp</dimen>
     <dimen name="margin_20">20dp</dimen>
     <dimen name="margin_24">24dp</dimen>
+    <dimen name="margin_28">24dp</dimen>
     <dimen name="margin_40">40dp</dimen>
     <dimen name="max_length_10">10</dimen>
 

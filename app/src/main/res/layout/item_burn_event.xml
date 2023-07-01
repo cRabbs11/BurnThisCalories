@@ -3,30 +3,46 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="@dimen/height_72">
 
     <TextView
-        android:id="@+id/status"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <TextView
-        android:id="@+id/calories_burned"
-        android:layout_width="match_parent"
+        android:id="@+id/status_text"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/status"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:textSize="@dimen/text_size_16"
+        app:layout_constraintStart_toEndOf="@id/status_icon"
+        app:layout_constraintEnd_toStartOf="@id/all_calories"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="@dimen/margin_16"
+        android:layout_marginEnd="@dimen/margin_16"
+        android:layout_marginBottom="@dimen/margin_40"/>
 
     <TextView
         android:id="@+id/count_of_products"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/calories_burned"
+        android:textSize="@dimen/text_size_14"
+        app:layout_constraintStart_toStartOf="@id/status_text"
+        app:layout_constraintEnd_toEndOf="@id/status_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="@dimen/margin_20"/>
+    
+    <ImageView
+        android:id="@+id/status_icon"
+        android:layout_width="@dimen/height_40"
+        android:layout_height="@dimen/height_40"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:layout_marginStart="@dimen/margin_16"/>
+
+    <TextView
+        android:id="@+id/all_calories"
+        android:layout_width="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/margin_24"
+        android:layout_marginEnd="@dimen/margin_16"
+        android:layout_height="@dimen/height_24"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

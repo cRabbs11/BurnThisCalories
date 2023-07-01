@@ -2,6 +2,17 @@
 <resources>
     <dimen name="margin_8">8dp</dimen>
     <dimen name="margin_16">16dp</dimen>
+    <dimen name="margin_20">20dp</dimen>
+    <dimen name="margin_24">24dp</dimen>
+    <dimen name="margin_28">24dp</dimen>
     <dimen name="margin_40">40dp</dimen>
     <dimen name="max_length_10">10</dimen>
+
+    <dimen name="height_72">72dp</dimen>
+    <dimen name="height_40">40dp</dimen>
+    <dimen name="height_24">24dp</dimen>
+
+    <dimen name="text_size_14">14sp</dimen>
+    <dimen name="text_size_16">16sp</dimen>
+
 </resources>

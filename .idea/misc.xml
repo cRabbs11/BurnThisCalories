@@ -5,6 +5,8 @@
       <map>
         <entry key="..\:/android projects/BurnThisCalories/app/src/main/res/drawable/background_white_green.xml" value="0.237" />
         <entry key="..\:/android projects/BurnThisCalories/app/src/main/res/drawable/background_white_yellow.xml" value="0.237" />
+        <entry key="..\:/android projects/BurnThisCalories/app/src/main/res/drawable/ic_baseline_done_24.xml" value="0.1975" />
+        <entry key="..\:/android projects/BurnThisCalories/app/src/main/res/drawable/ic_baseline_loop_24.xml" value="0.1975" />
         <entry key="..\:/android projects/BurnThisCalories/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/android projects/BurnThisCalories/app/src/main/res/layout/fragment_burn_event.xml" value="0.2526041666666667" />
         <entry key="..\:/android projects/BurnThisCalories/app/src/main/res/layout/fragment_burn_events.xml" value="0.3546875" />

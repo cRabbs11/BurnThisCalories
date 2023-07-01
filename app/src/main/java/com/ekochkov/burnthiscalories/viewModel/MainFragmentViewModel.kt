@@ -19,7 +19,7 @@ class MainFragmentViewModel: ViewModel() {
 
     val burnListLiveData = MutableLiveData<List<Product>>()
     val profileStatusLiveData = SingleLiveEvent<Int>()
-    val burnEventInProgress = SingleLiveEvent<BurnEvent?>()
+    val burnEventInProgress = MutableLiveData<BurnEvent?>()
 
     @Inject
     lateinit var interactor: Interactor
@@ -38,10 +38,15 @@ class MainFragmentViewModel: ViewModel() {
                 }
             }
 
+            this.launch(Dispatchers.IO) {
+                interactor.getBurnEventByStatusFlow(Constants.BURN_EVENT_STATUS_IN_PROGRESS).collect {
+                    burnEventInProgress.postValue(it)
+                }
+            }
+
             val burnEvent = interactor.getBurnEventInProgress()
             if (isBurnEventInProgress(burnEvent)) {
                 println("resume burning")
-                getBurnEventInProgressLiveData()
                 interactor.resumeBurnEvent(burnEvent!!)
             } else {
                 println("NOT resume burning")
@@ -65,15 +70,10 @@ class MainFragmentViewModel: ViewModel() {
     private fun startBurn(burnEvent: BurnEvent) {
         viewModelScope.launch(Dispatchers.Main) {
             interactor.startBurnEvent(burnEvent)
-            getBurnEventInProgressLiveData()
         }
     }
 
     fun getProductsToBurnFlow() = interactor.getProductsToBurnFlow()
-
-    private suspend fun getBurnEventInProgressLiveData()  {
-        burnEventInProgress.postValue(interactor.getBurnEventInProgress())
-    }
 
     private fun isBurnEventInProgress(burnEvent: BurnEvent?): Boolean {
         return (burnEvent!=null && burnEvent.eventStatus==Constants.BURN_EVENT_STATUS_IN_PROGRESS)

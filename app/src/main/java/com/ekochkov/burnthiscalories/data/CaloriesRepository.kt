@@ -108,4 +108,6 @@ class CaloriesRepository(private val context: Context, private val profileDao: P
     suspend fun insertTestEntity(testEntity: TestEntity) = profileDao.insertTest(testEntity)
 
     fun getBurnEventFlow(id: Int) = profileDao.getBurnEventFlow(id)
+
+    fun getBurnEventByStatusFlow(eventStatus: Int) = profileDao.getBurnEventByStatusFlow(eventStatus)
 }

@@ -80,6 +80,7 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
     }
 
     suspend fun startBurnEvent(burnEvent: BurnEvent) {
+        println("start burning")
         caloriesCalculator.setProfile(getProfile()!!)
         saveBurnEvent(burnEvent)
         val startedBurnEvent = getBurnEventInProgress()!!
@@ -87,6 +88,7 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
     }
 
     suspend fun resumeBurnEvent(burnEvent: BurnEvent) {
+        println("resume burning")
         caloriesCalculator.setProfile(getProfile()!!)
         startSensor(caloriesCalculator, burnEvent)
     }

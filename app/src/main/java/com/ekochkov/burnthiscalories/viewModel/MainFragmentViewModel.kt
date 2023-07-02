@@ -41,18 +41,10 @@ class MainFragmentViewModel: ViewModel() {
             this.launch(Dispatchers.IO) {
                 interactor.getBurnEventByStatusFlow(Constants.BURN_EVENT_STATUS_IN_PROGRESS).collect {
                     burnEventInProgress.postValue(it)
-                }
-            }
-
-            val burnEvent = interactor.getBurnEventInProgress()
-            if (isBurnEventInProgress(burnEvent)) {
-                println("resume burning")
-                interactor.resumeBurnEvent(burnEvent!!)
-            } else {
-                println("NOT resume burning")
-                viewModelScope.launch {
-                    getProductsToBurnFlow().collect {
-                        burnListLiveData.postValue(it)
+                    if (it!=null) {
+                        getProductsToBurnFlow().collect {
+                            burnListLiveData.postValue(it)
+                        }
                     }
                 }
             }

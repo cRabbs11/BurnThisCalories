@@ -26,6 +26,10 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = findViewById(R.id.navigation_view)
         navView.setupWithNavController(navController)
         setupActionBarWithNavController(navController)
+
+        viewModel.burnEventInProgress.observe(this) {
+
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

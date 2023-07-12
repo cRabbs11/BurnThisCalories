@@ -2,10 +2,7 @@ package com.ekochkov.burnthiscalories.data.dao
 
 import androidx.room.*
 import com.ekochkov.burnthiscalories.data.AppDataBase
-import com.ekochkov.burnthiscalories.data.entity.BurnEvent
-import com.ekochkov.burnthiscalories.data.entity.Product
-import com.ekochkov.burnthiscalories.data.entity.Profile
-import com.ekochkov.burnthiscalories.data.entity.TestEntity
+import com.ekochkov.burnthiscalories.data.entity.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao

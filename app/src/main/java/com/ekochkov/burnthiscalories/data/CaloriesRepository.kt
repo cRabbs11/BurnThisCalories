@@ -4,10 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.ekochkov.burnthiscalories.data.dao.ProfileDao
-import com.ekochkov.burnthiscalories.data.entity.BurnEvent
-import com.ekochkov.burnthiscalories.data.entity.Product
-import com.ekochkov.burnthiscalories.data.entity.Profile
-import com.ekochkov.burnthiscalories.data.entity.TestEntity
+import com.ekochkov.burnthiscalories.data.entity.*
 import com.ekochkov.burnthiscalories.util.Constants
 import com.ekochkov.burnthiscalories.services.BurnCaloriesService
 import kotlinx.coroutines.Dispatchers

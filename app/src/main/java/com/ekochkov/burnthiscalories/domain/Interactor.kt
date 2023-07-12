@@ -20,9 +20,6 @@ import kotlinx.coroutines.launch
 
 class Interactor(private val repository: CaloriesRepository, private val caloriesCalculator: CaloriesCalculator, private val context: Context) {
 
-    private lateinit var sensor: Sensor
-    private lateinit var sensorManager: SensorManager
-
     private var productToBurnList = arrayListOf<Product>()
 
     fun addToProductToBurnList(product: Product) {
@@ -84,70 +81,22 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
         caloriesCalculator.setProfile(getProfile()!!)
         saveBurnEvent(burnEvent)
         val startedBurnEvent = getBurnEventInProgress()!!
-        startSensor(caloriesCalculator, startedBurnEvent)
+        startStepCountSensor(startedBurnEvent)
     }
 
     suspend fun resumeBurnEvent(burnEvent: BurnEvent) {
         println("resume burning")
         caloriesCalculator.setProfile(getProfile()!!)
-        startSensor(caloriesCalculator, burnEvent)
+        startStepCountSensor(burnEvent)
     }
 
-    private fun startTest() {
-        MainScope().launch(Dispatchers.IO) {
-            //startSensorTest(sensorEventListener)
-        }
+
+    private fun startStepCountSensor(burnEvent: BurnEvent) {
+        caloriesCalculator.startCalculator(burnEvent)
     }
 
-    private fun startSensor(caloriesCalculator: CaloriesCalculator, burnEvent: BurnEvent) {
-        sensorManager = context.getSystemService(Service.SENSOR_SERVICE) as SensorManager
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-        var allCalories = 0
-        burnEvent.productsId.forEach {
-            allCalories+=it.calory
-        }
-        var savedBurnedCalories = 0
-        sensorManager.registerListener(object : SensorEventListener {
-            override fun onSensorChanged(event: SensorEvent?) {
-                val value = event!!.values[0].toInt()
-                if (!caloriesCalculator.isRunning) {
-                    caloriesCalculator.isRunning = true
-                    caloriesCalculator.stepsInStart = value
-                    savedBurnedCalories = burnEvent.caloriesBurned
-                    println("saved isNOTRunning = ${savedBurnedCalories} calories")
-                } else {
-                    println("saved isRunning = ${savedBurnedCalories} calories")
-                }
-                val steps = value-caloriesCalculator.stepsInStart
-                println("stepsCount = ${steps}")
-                val caloriesBurned = caloriesCalculator.getBurnedCalories(steps) + savedBurnedCalories
-                val caloriesLeft = allCalories - caloriesBurned
-                println("caloriesLeft = ${caloriesLeft}")
-                var status = Constants.BURN_EVENT_STATUS_IN_PROGRESS
-                if (caloriesLeft<=0) {
-                    println("done!")
-                    status = Constants.BURN_EVENT_STATUS_DONE
-                    sensorManager.unregisterListener(this)
-                }
-
-                val updatedBurnEvent = BurnEvent(
-                    id = burnEvent.id,
-                    productsId = burnEvent.productsId,
-                    caloriesBurned = caloriesBurned,
-                    eventStatus = status
-                )
-                println("burnEvent = ${burnEvent.toString()}")
-                MainScope().launch(Dispatchers.IO) {
-                    val result = repository.updateBurnEvent(updatedBurnEvent)
-                    println("updateResult = ${result}")
-                }
-            }
-
-            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-
-            }
-
-        }, sensor, SensorManager.SENSOR_DELAY_UI)
+    fun stopBurnEvent() {
+        caloriesCalculator.stopCalculator()
     }
 
     suspend fun saveBurnEvent(burnEvent: BurnEvent) {
@@ -176,5 +125,4 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
     }
 
     fun getBurnEventByStatusFlow(eventStatus: Int) = repository.getBurnEventByStatusFlow(eventStatus)
-
 }

@@ -29,14 +29,14 @@ class BurnCaloriesService: Service() {
         val burnList = bundle!!.get(Constants.BURN_LIST_KEY) as List<Product>
         //Запускаем новый поток, в котором будем выводить цифры в консоль с интервалом в секунду
 
-        val caloriesCalculator = CaloriesCalculator()
-        caloriesCalculator.setProfile(profile)
+        //val caloriesCalculator = CaloriesCalculator()
+        //caloriesCalculator.setProfile(profile)
         //caloriesCalculator.setProducts(burnList)
 
         //burnList.forEach {
         //    println("${it.toString()}")
         //}
-        startSensor(caloriesCalculator)
+        //startSensor(caloriesCalculator)
         //Executors.newSingleThreadExecutor().execute {
         //    repeat(100) {
         //        Thread.sleep(1000)

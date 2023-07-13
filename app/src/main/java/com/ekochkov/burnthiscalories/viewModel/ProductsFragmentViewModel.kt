@@ -18,6 +18,6 @@ class ProductsFragmentViewModel: ViewModel() {
     fun getProductsFlow() = interactor.getProductsFlow()
 
     fun addProductInBurnList(product: Product) {
-        interactor.addToProductToBurnList(product)
+        interactor.addProductToBurnList(product)
     }
 }

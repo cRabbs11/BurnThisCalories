@@ -4,10 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.ekochkov.burnthiscalories.data.dao.ProfileDao
-import com.ekochkov.burnthiscalories.data.entity.BurnEvent
-import com.ekochkov.burnthiscalories.data.entity.Product
-import com.ekochkov.burnthiscalories.data.entity.Profile
-import com.ekochkov.burnthiscalories.data.entity.TestEntity
+import com.ekochkov.burnthiscalories.data.entity.*
 import com.ekochkov.burnthiscalories.util.ProductsTypeConverter
 
 @Database(entities = [

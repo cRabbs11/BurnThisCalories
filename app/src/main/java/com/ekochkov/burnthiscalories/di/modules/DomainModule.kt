@@ -19,5 +19,5 @@ class DomainModule() {
 
     @Singleton
     @Provides
-    fun provideCaloriesCalculator() = CaloriesCalculator()
+    fun provideCaloriesCalculator(context: Context, repository: CaloriesRepository) = CaloriesCalculator(context, repository)
 }

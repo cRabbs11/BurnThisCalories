@@ -25,7 +25,7 @@ class CaloriesCalculator(private val context: Context, private val repository: C
     private val STEP_LENGTH_KOEF = 0.41
 
     private lateinit var sensor: Sensor
-    private lateinit var sensorManager: SensorManager
+    private var sensorManager: SensorManager? = null
     private var savedBurnedCalories = 0
     private lateinit var burnEvent: BurnEvent
     private var allCalories = 0
@@ -47,14 +47,14 @@ class CaloriesCalculator(private val context: Context, private val repository: C
     fun startCalculator(burnEvent: BurnEvent) {
         this.burnEvent = burnEvent
         sensorManager = context.getSystemService(Service.SENSOR_SERVICE) as SensorManager
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+        sensor = sensorManager!!.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
         allCalories = 0
         this.burnEvent.productsId.forEach {
             allCalories+=it.calory
         }
 
         savedBurnedCalories = 0
-        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI)
+        sensorManager!!.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI)
     }
 
     fun stopCalculator() {

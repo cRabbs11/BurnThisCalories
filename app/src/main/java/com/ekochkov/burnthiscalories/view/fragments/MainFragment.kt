@@ -118,11 +118,11 @@ class MainFragment: Fragment() {
 
         viewModel.burnEventInProgress.observe(viewLifecycleOwner) {
             burnEventInProgressId = if (it!=null) {
-                updateButtons(it)
                 it.id
             } else {
                 -1
             }
+            updateButtons(it)
         }
     }
 
@@ -152,9 +152,8 @@ class MainFragment: Fragment() {
         Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
     }
 
-    private fun updateButtons(burnEvent: BurnEvent) {
-        burnEventStatus = burnEvent.eventStatus
-        if (burnEventStatus==Constants.BURN_EVENT_STATUS_IN_PROGRESS) {
+    private fun updateButtons(burnEvent: BurnEvent?) {
+        if (burnEvent!=null || burnEventStatus==Constants.BURN_EVENT_STATUS_IN_PROGRESS) {
             binding.startBtn.isEnabled = false
             binding.addProductBtn.isEnabled = false
             binding.toBurnEventBtn.visibility = View.VISIBLE

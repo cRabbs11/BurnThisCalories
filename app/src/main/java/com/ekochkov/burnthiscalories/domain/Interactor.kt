@@ -1,11 +1,6 @@
 package com.ekochkov.burnthiscalories.domain
 
-import android.app.Service
 import android.content.Context
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import com.ekochkov.burnthiscalories.data.CaloriesRepository
 import com.ekochkov.burnthiscalories.data.entity.BurnEvent
 import com.ekochkov.burnthiscalories.data.entity.Product
@@ -14,20 +9,30 @@ import com.ekochkov.burnthiscalories.util.CaloriesCalculator
 import com.ekochkov.burnthiscalories.util.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class Interactor(private val repository: CaloriesRepository, private val caloriesCalculator: CaloriesCalculator, private val context: Context) {
 
-    private var productToBurnList = arrayListOf<Product>()
+    private var productToBurnList = mutableListOf<Product>()
+    private var burnListFlow = MutableSharedFlow<List<Product>>()
 
-    fun addToProductToBurnList(product: Product) {
+    fun addProductToBurnList(product: Product) {
         productToBurnList.add(product)
+        MainScope().launch {
+            burnListFlow.emit(productToBurnList)
+        }
     }
 
-    fun deleteFromProductToBurnList(product: Product) {
-        productToBurnList.remove(product)
+    fun clearProductToBurnList() {
+        productToBurnList.clear()
+        MainScope().launch {
+            burnListFlow.emit(productToBurnList)
+        }
+    }
+
+    fun getProductsToBurnStateFlow(): Flow<List<Product>> {
+        return burnListFlow
     }
 
     fun getProductsToBurnFlow(): Flow<List<Product>> {
@@ -68,10 +73,6 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
         repository.saveProducts(list)
     }
 
-    fun addProductInBurnList(product: Product) {
-        repository.addProductInBurnList(product)
-    }
-
     fun getBurnList(): List<Product> {
         return productToBurnList
     }
@@ -82,6 +83,7 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
         saveBurnEvent(burnEvent)
         val startedBurnEvent = getBurnEventInProgress()!!
         startStepCountSensor(startedBurnEvent)
+        clearProductToBurnList()
     }
 
     suspend fun resumeBurnEvent(burnEvent: BurnEvent) {
@@ -124,5 +126,5 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
         }
     }
 
-    fun getBurnEventByStatusFlow(eventStatus: Int) = repository.getBurnEventByStatusFlow(eventStatus)
+    fun getBurnEventsByStatusFlow(eventStatus: Int) = repository.getBurnEventsByStatusFlow(eventStatus)
 }

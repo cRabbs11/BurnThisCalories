@@ -1,14 +1,9 @@
 package com.ekochkov.burnthiscalories.viewModel
 
-import android.content.Context
-import android.util.Log
+
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.Worker
-import androidx.work.WorkerParameters
 import com.ekochkov.burnthiscalories.App
 import com.ekochkov.burnthiscalories.data.PrePopulateDB
 import com.ekochkov.burnthiscalories.data.entity.BurnEvent
@@ -18,7 +13,6 @@ import com.ekochkov.burnthiscalories.util.Constants
 import com.ekochkov.burnthiscalories.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -49,13 +43,19 @@ class MainFragmentViewModel: ViewModel() {
             }
 
             this.launch(Dispatchers.IO) {
-                interactor.getBurnEventByStatusFlow(Constants.BURN_EVENT_STATUS_IN_PROGRESS).collect {
-                    burnEventInProgress.postValue(it)
-                    if (it!=null) {
-                        getProductsToBurnFlow().collect {
-                            burnListLiveData.postValue(it)
-                        }
+                interactor.getBurnEventsByStatusFlow(Constants.BURN_EVENT_STATUS_IN_PROGRESS).collect {
+                    if (it.isNotEmpty()) {
+                        burnEventInProgress.postValue(it[0])
+                    } else {
+                        burnEventInProgress.postValue(null)
                     }
+                }
+            }
+
+            this.launch(Dispatchers.IO) {
+                getProductsToBurnFlow().collect {
+                    println("listtoBurn2 = ${it.size}")
+                    burnListLiveData.postValue(it)
                 }
             }
         }
@@ -75,7 +75,7 @@ class MainFragmentViewModel: ViewModel() {
         }
     }
 
-    fun getProductsToBurnFlow() = interactor.getProductsToBurnFlow()
+    fun getProductsToBurnFlow() = interactor.getProductsToBurnStateFlow()
 
     private fun isBurnEventInProgress(burnEvent: BurnEvent?): Boolean {
         return (burnEvent!=null && burnEvent.eventStatus==Constants.BURN_EVENT_STATUS_IN_PROGRESS)

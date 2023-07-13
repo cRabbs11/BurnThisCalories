@@ -69,5 +69,5 @@ interface ProfileDao {
     fun getBurnEventsFlow(): Flow<List<BurnEvent>>
 
     @Query("SELECT * FROM ${AppDataBase.BURN_EVENT_TABLE_NAME} WHERE eventStatus LIKE:eventStatus")
-    fun getBurnEventByStatusFlow(eventStatus: Int): Flow<BurnEvent?>
+    fun getBurnEventsByStatusFlow(eventStatus: Int): Flow<List<BurnEvent>>
 }

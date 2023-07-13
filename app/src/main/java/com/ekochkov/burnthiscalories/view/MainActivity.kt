@@ -1,6 +1,5 @@
 package com.ekochkov.burnthiscalories.view
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,15 +8,9 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.Worker
-import androidx.work.WorkerParameters
 import com.ekochkov.burnthiscalories.R
 import com.ekochkov.burnthiscalories.viewModel.MainActivityViewModel
-import com.ekochkov.burnthiscalories.viewModel.MainFragmentViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 

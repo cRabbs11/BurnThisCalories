@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.Flow
 interface ProfileDao {
 
     @Query("SELECT * FROM ${AppDataBase.PROFILE_TABLE_NAME} WHERE id LIKE 1")
-    suspend fun getProfile() : Profile?
+    suspend fun getProfile() : ProfileDB?
 
     @Query("SELECT * FROM ${AppDataBase.PROFILE_TABLE_NAME} WHERE id LIKE 1")
-    fun getProfileFlow() : Flow<Profile?>
+    fun getProfileFlow() : Flow<ProfileDB?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertProfile(profile: Profile)
+    suspend fun insertProfile(profile: ProfileDB)
 
     @Insert
     suspend fun insertTest(testEntity: TestEntity)

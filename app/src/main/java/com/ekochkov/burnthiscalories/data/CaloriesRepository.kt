@@ -9,6 +9,7 @@ import com.ekochkov.burnthiscalories.util.Constants
 import com.ekochkov.burnthiscalories.services.BurnCaloriesService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 
@@ -17,13 +18,13 @@ class CaloriesRepository(private val context: Context, private val profileDao: P
     private var burnList = arrayListOf<Product>()
 
     suspend fun getProfile(): Profile? {
-        return profileDao.getProfile()
+        return profileDao.getProfile()?.toProfile()
     }
 
-    fun getProfileFlow() = profileDao.getProfileFlow()
+    fun getProfileFlow() = profileDao.getProfileFlow().map { it?.toProfile() }
 
     suspend fun saveProfile(profile: Profile) {
-        profileDao.insertProfile(profile)
+        profileDao.insertProfile(profile.toProfileDB())
     }
 
     suspend fun getProducts() : List<Product> {

@@ -8,7 +8,7 @@ import com.ekochkov.burnthiscalories.data.entity.*
 import com.ekochkov.burnthiscalories.util.ProductsTypeConverter
 
 @Database(entities = [
-    Profile::class,
+    ProfileDB::class,
     Product::class,
     BurnEvent::class,
     TestEntity::class],

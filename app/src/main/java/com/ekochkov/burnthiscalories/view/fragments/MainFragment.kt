@@ -51,6 +51,8 @@ class MainFragment: Fragment() {
         return binding.root
     }
 
+    //TODO отслеживать состояние профиля
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val items = listOf("Option 1", "Option 2", "Option 3", "Option 4")

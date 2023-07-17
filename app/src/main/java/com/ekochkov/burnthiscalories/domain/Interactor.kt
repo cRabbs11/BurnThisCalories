@@ -41,10 +41,6 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
         }
     }
 
-    suspend fun getProfile(): Profile? {
-        return repository.getProfile()
-    }
-
     fun getProfileFlow() = repository.getProfileFlow()
 
     suspend fun saveProfile(profile: Profile) {
@@ -78,9 +74,9 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
     }
 
     suspend fun startBurnEvent(burnEvent: BurnEvent): Boolean {
-        return if (repository.getProfile()!=null) {
+        return if (repository.ifProfileExist()) {
             println("start burning")
-            caloriesCalculator.setProfile(getProfile()!!)
+            caloriesCalculator.setProfile(repository.getProfile()!!)
             saveBurnEvent(burnEvent)
             val startedBurnEvent = getBurnEventInProgress()!!
             startStepCountSensor(startedBurnEvent)
@@ -93,7 +89,7 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
 
     suspend fun resumeBurnEvent(burnEvent: BurnEvent) {
         println("resume burning")
-        caloriesCalculator.setProfile(getProfile()!!)
+        caloriesCalculator.setProfile(repository.getProfile()!!)
         startStepCountSensor(burnEvent)
     }
 

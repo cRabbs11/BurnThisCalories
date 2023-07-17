@@ -27,6 +27,10 @@ class CaloriesRepository(private val context: Context, private val profileDao: P
         profileDao.insertProfile(profile.toProfileDB())
     }
 
+    suspend fun ifProfileExist(): Boolean {
+        return profileDao.getProfile()!=null
+    }
+
     suspend fun getProducts() : List<Product> {
         return profileDao.getProducts()
     }

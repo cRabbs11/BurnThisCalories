@@ -77,13 +77,18 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
         return productToBurnList
     }
 
-    suspend fun startBurnEvent(burnEvent: BurnEvent) {
-        println("start burning")
-        caloriesCalculator.setProfile(getProfile()!!)
-        saveBurnEvent(burnEvent)
-        val startedBurnEvent = getBurnEventInProgress()!!
-        startStepCountSensor(startedBurnEvent)
-        clearProductToBurnList()
+    suspend fun startBurnEvent(burnEvent: BurnEvent): Boolean {
+        return if (repository.getProfile()!=null) {
+            println("start burning")
+            caloriesCalculator.setProfile(getProfile()!!)
+            saveBurnEvent(burnEvent)
+            val startedBurnEvent = getBurnEventInProgress()!!
+            startStepCountSensor(startedBurnEvent)
+            clearProductToBurnList()
+            true
+        } else {
+            false
+        }
     }
 
     suspend fun resumeBurnEvent(burnEvent: BurnEvent) {

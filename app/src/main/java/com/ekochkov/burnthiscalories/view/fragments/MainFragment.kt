@@ -23,6 +23,7 @@ import com.ekochkov.burnthiscalories.data.entity.Product
 import com.ekochkov.burnthiscalories.databinding.FragmentMainBinding
 import com.ekochkov.burnthiscalories.diffs.ProductDiff
 import com.ekochkov.burnthiscalories.util.Constants
+import com.ekochkov.burnthiscalories.util.Constants.PROFILE_IS_NOT_FILLED_TEXT
 import com.ekochkov.burnthiscalories.util.OnItemClickListener
 import com.ekochkov.burnthiscalories.view.adapters.ProductListAdapter
 import com.ekochkov.burnthiscalories.view.fragments.ProductsFragment.Companion.FLAG_ADD_PRODUCTS_TO_BURN_EVENT
@@ -60,14 +61,7 @@ class MainFragment: Fragment() {
 
         viewModel.profileStatusLiveData.observe(viewLifecycleOwner) {
             if (it==Constants.PROFILE_IS_NOT_FILLED) {
-                binding.startBtn.isEnabled = false
-                binding.addProductBtn.isEnabled = false
-            } else if (burnEventStatus==Constants.BURN_EVENT_STATUS_IN_PROGRESS) {
-                binding.startBtn.isEnabled = false
-                binding.addProductBtn.isEnabled = false
-            } else {
-                binding.startBtn.isEnabled = true
-                binding.addProductBtn.isEnabled = true
+                showToast(PROFILE_IS_NOT_FILLED_TEXT)
             }
         }
 

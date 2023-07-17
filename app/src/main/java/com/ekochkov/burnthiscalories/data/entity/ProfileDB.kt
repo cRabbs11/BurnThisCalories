@@ -15,12 +15,7 @@ data class ProfileDB (
     @ColumnInfo(name = "weight") val weight: String,
     @ColumnInfo(name = "age") val age: Int,
     @ColumnInfo(name = "sex") val sex: Int
-): Serializable {
-    companion object {
-        val MALE = 0
-        val FEMALE = 1
-    }
-}
+): Serializable
 
 fun ProfileDB.toProfile() = Profile(
     name = name,

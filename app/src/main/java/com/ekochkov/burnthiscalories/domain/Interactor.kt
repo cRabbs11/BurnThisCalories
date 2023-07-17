@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class Interactor(private val repository: CaloriesRepository, private val caloriesCalculator: CaloriesCalculator, private val context: Context) {
 
@@ -43,8 +44,13 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
 
     fun getProfileFlow() = repository.getProfileFlow()
 
-    suspend fun saveProfile(profile: Profile) {
-        repository.saveProfile(profile)
+    suspend fun saveProfile(profile: Profile): Result<Unit> {
+        try {
+            repository.saveProfile(profile)
+        } catch (e: Exception) {
+            return Result.failure(e)
+        }
+        return Result.success(Unit)
     }
 
     suspend fun getProducts(): List<Product> {

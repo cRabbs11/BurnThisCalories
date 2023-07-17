@@ -23,8 +23,8 @@ class CaloriesRepository(private val context: Context, private val profileDao: P
 
     fun getProfileFlow() = profileDao.getProfileFlow().map { it?.toProfile() }
 
-    suspend fun saveProfile(profile: Profile) {
-        profileDao.insertProfile(profile.toProfileDB())
+    suspend fun saveProfile(profile: Profile): Long {
+        return profileDao.insertProfile(profile.toProfileDB())
     }
 
     suspend fun ifProfileExist(): Boolean {

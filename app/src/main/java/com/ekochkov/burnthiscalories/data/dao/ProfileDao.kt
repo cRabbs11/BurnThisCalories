@@ -15,7 +15,7 @@ interface ProfileDao {
     fun getProfileFlow() : Flow<ProfileDB?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertProfile(profile: ProfileDB)
+    suspend fun insertProfile(profile: ProfileDB): Long
 
     @Insert
     suspend fun insertTest(testEntity: TestEntity)

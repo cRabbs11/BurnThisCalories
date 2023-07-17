@@ -19,18 +19,18 @@ class ProfileFragmentViewModel: ViewModel() {
 
     init {
         App.instance.dagger.inject(this)
+        viewModelScope.launch(Dispatchers.IO) {
+            getProfileFlow().collect { profile ->
+                profile?.let {
+                    prodileLiveData.postValue(profile)
+                }
+            }
+        }
     }
 
     fun saveProfile(profile: Profile) {
         viewModelScope.launch(Dispatchers.IO) {
             interactor.saveProfile(profile)
-            launch(Dispatchers.IO) {
-                getProfileFlow().collect { profile ->
-                    profile?.let {
-                        prodileLiveData.postValue(profile)
-                    }
-                }
-            }
         }
     }
 

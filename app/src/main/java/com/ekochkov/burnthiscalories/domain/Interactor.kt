@@ -89,8 +89,10 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
 
     suspend fun resumeBurnEvent(burnEvent: BurnEvent) {
         println("resume burning")
-        caloriesCalculator.setProfile(repository.getProfile()!!)
-        startStepCountSensor(burnEvent)
+        if (repository.ifProfileExist()) {
+            caloriesCalculator.setProfile(repository.getProfile()!!)
+            startStepCountSensor(burnEvent)
+        }
     }
 
 

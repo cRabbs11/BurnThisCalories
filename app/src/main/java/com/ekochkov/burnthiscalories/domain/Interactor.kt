@@ -7,16 +7,15 @@ import com.ekochkov.burnthiscalories.data.entity.Product
 import com.ekochkov.burnthiscalories.data.entity.Profile
 import com.ekochkov.burnthiscalories.util.CaloriesCalculator
 import com.ekochkov.burnthiscalories.util.Constants
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class Interactor(private val repository: CaloriesRepository, private val caloriesCalculator: CaloriesCalculator, private val context: Context) {
 
     private var productToBurnList = mutableListOf<Product>()
     private var burnListFlow = MutableSharedFlow<List<Product>>()
+    private var finishEventJob: Job? = null
 
     fun addProductToBurnList(product: Product) {
         productToBurnList.add(product)
@@ -123,16 +122,16 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
     suspend fun getBurnEvent(id: Int) = repository.getBurnEvent(id)
 
     fun finishEvent() {
-        MainScope().launch(Dispatchers.IO) {
-            var burnEvent = getBurnEventInProgress()
-            val updatedBurnEvent = BurnEvent(
-                id = burnEvent!!.id,
-                productsId = burnEvent.productsId,
-                caloriesBurned = 7227,
-                eventStatus = Constants.BURN_EVENT_STATUS_DONE
-            )
-            repository.updateBurnEvent(updatedBurnEvent)
-        }
+       finishEventJob = CoroutineScope(Job()).launch (Dispatchers.IO){
+           var burnEvent = getBurnEventInProgress()
+           val updatedBurnEvent = BurnEvent(
+               id = burnEvent!!.id,
+               productsId = burnEvent.productsId,
+               caloriesBurned = 7227,
+               eventStatus = Constants.BURN_EVENT_STATUS_DONE
+           )
+           repository.updateBurnEvent(updatedBurnEvent)
+       }
     }
 
     fun getBurnEventsByStatusFlow(eventStatus: Int) = repository.getBurnEventsByStatusFlow(eventStatus)

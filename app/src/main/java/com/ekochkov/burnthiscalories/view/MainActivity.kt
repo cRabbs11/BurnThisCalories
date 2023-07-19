@@ -31,13 +31,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        Log.d("BMTH", "activity on resume")
         viewModel.tryLaunchStepCount()
     }
 
     override fun onStop() {
         super.onStop()
-        Log.d("BMTH", "activity on stop")
         viewModel.stopLaunchStepCount()
     }
 

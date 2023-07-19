@@ -7,15 +7,15 @@ import com.ekochkov.burnthiscalories.data.entity.Product
 import com.ekochkov.burnthiscalories.data.entity.Profile
 import com.ekochkov.burnthiscalories.util.CaloriesCalculator
 import com.ekochkov.burnthiscalories.util.Constants
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class Interactor(private val repository: CaloriesRepository, private val caloriesCalculator: CaloriesCalculator, private val context: Context) {
 
     private var productToBurnList = mutableListOf<Product>()
     private var burnListFlow = MutableSharedFlow<List<Product>>()
+    private var finishEventJob: Job? = null
 
     fun addProductToBurnList(product: Product) {
         productToBurnList.add(product)
@@ -41,14 +41,15 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
         }
     }
 
-    suspend fun getProfile(): Profile? {
-        return repository.getProfile()
-    }
-
     fun getProfileFlow() = repository.getProfileFlow()
 
-    suspend fun saveProfile(profile: Profile) {
-        repository.saveProfile(profile)
+    suspend fun saveProfile(profile: Profile): Result<Unit> {
+        try {
+            repository.saveProfile(profile)
+        } catch (e: Exception) {
+            return Result.failure(e)
+        }
+        return Result.success(Unit)
     }
 
     suspend fun getProducts(): List<Product> {
@@ -77,19 +78,26 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
         return productToBurnList
     }
 
-    suspend fun startBurnEvent(burnEvent: BurnEvent) {
-        println("start burning")
-        caloriesCalculator.setProfile(getProfile()!!)
-        saveBurnEvent(burnEvent)
-        val startedBurnEvent = getBurnEventInProgress()!!
-        startStepCountSensor(startedBurnEvent)
-        clearProductToBurnList()
+    suspend fun startBurnEvent(burnEvent: BurnEvent): Boolean {
+        return if (repository.ifProfileExist()) {
+            println("start burning")
+            caloriesCalculator.setProfile(repository.getProfile()!!)
+            saveBurnEvent(burnEvent)
+            val startedBurnEvent = getBurnEventInProgress()!!
+            startStepCountSensor(startedBurnEvent)
+            clearProductToBurnList()
+            true
+        } else {
+            false
+        }
     }
 
     suspend fun resumeBurnEvent(burnEvent: BurnEvent) {
         println("resume burning")
-        caloriesCalculator.setProfile(getProfile()!!)
-        startStepCountSensor(burnEvent)
+        if (repository.ifProfileExist()) {
+            caloriesCalculator.setProfile(repository.getProfile()!!)
+            startStepCountSensor(burnEvent)
+        }
     }
 
 
@@ -114,16 +122,16 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
     suspend fun getBurnEvent(id: Int) = repository.getBurnEvent(id)
 
     fun finishEvent() {
-        MainScope().launch(Dispatchers.IO) {
-            var burnEvent = getBurnEventInProgress()
-            val updatedBurnEvent = BurnEvent(
-                id = burnEvent!!.id,
-                productsId = burnEvent.productsId,
-                caloriesBurned = 7227,
-                eventStatus = Constants.BURN_EVENT_STATUS_DONE
-            )
-            repository.updateBurnEvent(updatedBurnEvent)
-        }
+       finishEventJob = CoroutineScope(Job()).launch (Dispatchers.IO){
+           var burnEvent = getBurnEventInProgress()
+           val updatedBurnEvent = BurnEvent(
+               id = burnEvent!!.id,
+               productsId = burnEvent.productsId,
+               caloriesBurned = 7227,
+               eventStatus = Constants.BURN_EVENT_STATUS_DONE
+           )
+           repository.updateBurnEvent(updatedBurnEvent)
+       }
     }
 
     fun getBurnEventsByStatusFlow(eventStatus: Int) = repository.getBurnEventsByStatusFlow(eventStatus)

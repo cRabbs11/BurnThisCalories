@@ -1,7 +1,6 @@
 package com.ekochkov.burnthiscalories.util
 
 import android.util.Log
-import com.ekochkov.burnthiscalories.data.entity.BurnEvent
 import com.ekochkov.burnthiscalories.data.entity.Product
 import com.ekochkov.burnthiscalories.data.entity.Profile
 

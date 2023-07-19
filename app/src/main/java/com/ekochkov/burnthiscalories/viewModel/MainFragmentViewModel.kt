@@ -28,20 +28,7 @@ class MainFragmentViewModel: ViewModel() {
     init {
         App.instance.dagger.inject(this)
         firstLaunchPopulateDB()
-
-
-
         viewModelScope.launch(Dispatchers.IO) {
-            this.launch {
-                interactor.getProfileFlow().collect {
-                    if (it == null) {
-                        profileStatusLiveData.postValue(Constants.PROFILE_IS_NOT_FILLED)
-                    } else {
-                        profileStatusLiveData.postValue(Constants.PROFILE_IS_FILLED)
-                    }
-                }
-            }
-
             this.launch(Dispatchers.IO) {
                 interactor.getBurnEventsByStatusFlow(Constants.BURN_EVENT_STATUS_IN_PROGRESS).collect {
                     if (it.isNotEmpty()) {
@@ -71,7 +58,11 @@ class MainFragmentViewModel: ViewModel() {
 
     private fun startBurn(burnEvent: BurnEvent) {
         viewModelScope.launch(Dispatchers.Main) {
-            interactor.startBurnEvent(burnEvent)
+            if (interactor.startBurnEvent(burnEvent)) {
+                profileStatusLiveData.postValue(Constants.PROFILE_IS_FILLED)
+            } else {
+                profileStatusLiveData.postValue(Constants.PROFILE_IS_NOT_FILLED)
+            }
         }
     }
 

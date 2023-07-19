@@ -32,14 +32,14 @@ class ProfileFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         lifecycle.coroutineScope.launch{
-            viewModel.getProfileFlow().collect { profile ->
-                profile?.let {
-                    binding.heightEditText.setText(it.height)
-                    binding.weightEditText.setText(it.weight)
-                    binding.ageEditText.setText(it.age.toString())
-                    binding.nameEditText.setText(it.name)
+            viewModel.prodileLiveData.observe(viewLifecycleOwner) { profile ->
+                profile?.apply {
+                    binding.heightEditText.setText(height)
+                    binding.weightEditText.setText(weight)
+                    binding.ageEditText.setText(age.toString())
+                    binding.nameEditText.setText(name)
                     binding.sexTypeRadioGroup.check(
-                        when(it.sex) {
+                        when(sex) {
                             Profile.MALE -> {
                                 binding.maleRbtn.id}
                             else -> {

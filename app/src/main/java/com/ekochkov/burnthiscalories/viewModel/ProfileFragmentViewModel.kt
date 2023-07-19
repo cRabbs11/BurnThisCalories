@@ -1,5 +1,6 @@
 package com.ekochkov.burnthiscalories.viewModel
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ekochkov.burnthiscalories.App
@@ -11,11 +12,20 @@ import javax.inject.Inject
 
 class ProfileFragmentViewModel: ViewModel() {
 
+    val prodileLiveData = MutableLiveData<Profile>()
+
     @Inject
     lateinit var interactor: Interactor
 
     init {
         App.instance.dagger.inject(this)
+        viewModelScope.launch(Dispatchers.IO) {
+            getProfileFlow().collect { profile ->
+                profile?.let {
+                    prodileLiveData.postValue(profile)
+                }
+            }
+        }
     }
 
     fun saveProfile(profile: Profile) {
@@ -24,5 +34,5 @@ class ProfileFragmentViewModel: ViewModel() {
         }
     }
 
-    fun getProfileFlow() = interactor.getProfileFlow()
+    private fun getProfileFlow() = interactor.getProfileFlow()
 }

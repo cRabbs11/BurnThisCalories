@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
 
     <application
         android:allowBackup="false"
@@ -21,6 +23,9 @@
 
         <service android:name="com.ekochkov.burnthiscalories.services.BurnCaloriesService"
             android:description="@string/burn_service_descr"/>
+
+        <service android:name="com.ekochkov.burnthiscalories.services.BurnEventForegroundService"
+            android:description="@string/burn_service_descr" />
         <activity
             android:name=".view.MainActivity"
             android:exported="true">

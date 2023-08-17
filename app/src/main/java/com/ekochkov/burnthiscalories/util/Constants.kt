@@ -30,4 +30,9 @@ object Constants {
     const val PROFILE_IS_NOT_FILLED = 0
     const val PROFILE_IS_FILLED = 1
     const val PROFILE_IS_NOT_FILLED_TEXT = "Профиль не заполнен"
+
+    const val BURN_EVENT_IS_RUNNING = "сжигание калорий запущено"
+
+    const val BURN_EVENT_SERVICE_CHANNEL_ID = "burnEventService"
+    const val BURN_EVENT_SERVICE_CHANNEL_NAME = "burnEventService"
 }

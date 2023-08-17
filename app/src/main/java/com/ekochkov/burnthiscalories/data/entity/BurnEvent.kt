@@ -6,6 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.ekochkov.burnthiscalories.data.AppDataBase
 import com.ekochkov.burnthiscalories.util.Constants
+import java.io.Serializable
 
 @Entity(tableName = AppDataBase.BURN_EVENT_TABLE_NAME, indices = [Index(value = ["id"], unique = true)])
 data class BurnEvent(
@@ -13,5 +14,5 @@ data class BurnEvent(
     val productsId: List<Product>,
     @ColumnInfo(name = "caloriesBurned") val caloriesBurned: Int,
     @ColumnInfo(name = "eventStatus") val eventStatus: Int = Constants.BURN_EVENT_STATUS_IN_PROGRESS,
-) {
+): Serializable {
 }

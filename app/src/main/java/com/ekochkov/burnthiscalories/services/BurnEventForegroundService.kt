@@ -9,21 +9,35 @@ import android.hardware.SensorManager
 import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresApi
+import com.ekochkov.burnthiscalories.App
 
 import com.ekochkov.burnthiscalories.R
+import com.ekochkov.burnthiscalories.data.entity.BurnEvent
+import com.ekochkov.burnthiscalories.domain.Interactor
 import com.ekochkov.burnthiscalories.util.Constants
+import javax.inject.Inject
 
 class BurnEventForegroundService: Service(), SensorEventListener {
+
+    @Inject
+    lateinit var interactor: Interactor
 
     lateinit var sensorManager : SensorManager
     lateinit var sensor: Sensor
     lateinit var notificationManager: NotificationManager
+
+    override fun onCreate() {
+        super.onCreate()
+        App.instance.dagger.inject(this)
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createNotificationChannel()
         startForeground(1, getNotification(Constants.BURN_EVENT_IS_RUNNING, "ккал осталось..."))
         startSensor()
+        val burnEvent = intent?.getSerializableExtra(Constants.BURN_EVENT_KEY) as BurnEvent
+        startCaloriesCalculator(burnEvent)
         return START_NOT_STICKY
     }
 
@@ -53,6 +67,10 @@ class BurnEventForegroundService: Service(), SensorEventListener {
         sensorManager?.let {
             it.unregisterListener(this)
         }
+    }
+
+    private fun startCaloriesCalculator(burnEvent: BurnEvent?) {
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

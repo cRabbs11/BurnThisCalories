@@ -12,9 +12,12 @@ import androidx.annotation.RequiresApi
 import com.ekochkov.burnthiscalories.App
 
 import com.ekochkov.burnthiscalories.R
-import com.ekochkov.burnthiscalories.data.entity.BurnEvent
 import com.ekochkov.burnthiscalories.domain.Interactor
+import com.ekochkov.burnthiscalories.util.CaloriesCalculator
 import com.ekochkov.burnthiscalories.util.Constants
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class BurnEventForegroundService: Service(), SensorEventListener {
@@ -22,6 +25,7 @@ class BurnEventForegroundService: Service(), SensorEventListener {
     @Inject
     lateinit var interactor: Interactor
 
+    lateinit var caloriesCalculator: CaloriesCalculator
     lateinit var sensorManager : SensorManager
     lateinit var sensor: Sensor
     lateinit var notificationManager: NotificationManager
@@ -36,8 +40,8 @@ class BurnEventForegroundService: Service(), SensorEventListener {
         createNotificationChannel()
         startForeground(1, getNotification(Constants.BURN_EVENT_IS_RUNNING, "ккал осталось..."))
         startSensor()
-        val burnEvent = intent?.getSerializableExtra(Constants.BURN_EVENT_KEY) as BurnEvent
-        startCaloriesCalculator(burnEvent)
+        //TODO проверить и поправить CaloriesCalculator
+        startCaloriesCalculator()
         return START_NOT_STICKY
     }
 
@@ -69,8 +73,24 @@ class BurnEventForegroundService: Service(), SensorEventListener {
         }
     }
 
-    private fun startCaloriesCalculator(burnEvent: BurnEvent?) {
+    private fun startCaloriesCalculator() {
+        GlobalScope.launch(Dispatchers.Default) {
+            val burnEvent = interactor.getBurnEventInProgress()
+            val profile = interactor.getProfile()
+            if (burnEvent!=null && profile!=null) {
+                caloriesCalculator = CaloriesCalculator.Builder()
+                    .setBurnEvent(burnEvent)
+                    .setProfile(profile)
+                    .build()
+            } else {
+                stopSelf()
+            }
+        }
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        stopSensor()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -86,9 +106,21 @@ class BurnEventForegroundService: Service(), SensorEventListener {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onSensorChanged(event: SensorEvent?) {
         val value = event!!.values[0].toInt()
-        notificationManager.notify(1, getNotification(Constants.BURN_EVENT_IS_RUNNING, "ккал осталось...$value"))
+        if (!caloriesCalculator.isRunning()) {
+            caloriesCalculator.setStartedStep(value)
+        }
+        val caloriesLeft = caloriesCalculator.getCaloriesLeft(value)
+
+        if (caloriesLeft>=0) {
+            notificationManager.notify(1, getNotification(Constants.BURN_EVENT_IS_RUNNING, "ккал осталось...$caloriesLeft"))
+        } else {
+            notificationManager.notify(1, getNotification(Constants.BURN_EVENT_IS_RUNNING, "событие закончено!"))
+            stopSelf()
+            //GlobalScope.launch {
+            //    delay(10000)
+            //}
+        }
     }
 
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-    }
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
 }

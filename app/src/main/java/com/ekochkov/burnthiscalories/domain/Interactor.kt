@@ -134,5 +134,9 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
        }
     }
 
+    suspend fun updateBurnEvent(burnEvent: BurnEvent) {
+        repository.updateBurnEvent(burnEvent)
+    }
+
     fun getBurnEventsByStatusFlow(eventStatus: Int) = repository.getBurnEventsByStatusFlow(eventStatus)
 }

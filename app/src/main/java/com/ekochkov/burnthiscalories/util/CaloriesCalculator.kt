@@ -30,6 +30,14 @@ class CaloriesCalculator(private val profile: Profile, private val burnEvent: Bu
         return isRunning
     }
 
+    fun stopRunning() {
+        isRunning = false
+    }
+
+    fun getAllCalories(): Int {
+        return allCalories
+    }
+
     fun getBurnedCalories(steps: Int): Int {
         //количесвто сожженных килокалорий нв километр: 0,5 х вec чeлoвeka (kг) х paccтoяниe (km) = coжжeнныe Kkaл
 

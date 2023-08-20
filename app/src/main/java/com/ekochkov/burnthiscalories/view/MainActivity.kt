@@ -34,11 +34,6 @@ class MainActivity : AppCompatActivity() {
         viewModel.tryLaunchStepCount()
     }
 
-    override fun onStop() {
-        super.onStop()
-        viewModel.stopLaunchStepCount()
-    }
-
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()

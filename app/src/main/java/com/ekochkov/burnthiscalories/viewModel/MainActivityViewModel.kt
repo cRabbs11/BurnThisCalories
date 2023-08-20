@@ -25,10 +25,4 @@ class MainActivityViewModel: ViewModel() {
             }
         }
     }
-
-    fun stopLaunchStepCount() {
-        viewModelScope.launch(Dispatchers.IO) {
-            interactor.stopBurnEvent()
-        }
-    }
 }

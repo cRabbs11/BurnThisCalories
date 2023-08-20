@@ -59,10 +59,8 @@ class MainFragment: Fragment() {
         val items = listOf("Option 1", "Option 2", "Option 3", "Option 4")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, items)
 
-        viewModel.profileStatusLiveData.observe(viewLifecycleOwner) {
-            if (it==Constants.PROFILE_IS_NOT_FILLED) {
-                showToast(PROFILE_IS_NOT_FILLED_TEXT)
-            }
+        viewModel.toastLiveData.observe(viewLifecycleOwner) { text ->
+            showToast(text)
         }
 
         productAdapter = ProductListAdapter(object: OnItemClickListener<Product> {

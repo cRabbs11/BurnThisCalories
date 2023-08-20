@@ -19,8 +19,8 @@ import javax.inject.Inject
 class MainFragmentViewModel: ViewModel() {
 
     val burnListLiveData = MutableLiveData<List<Product>>()
-    val profileStatusLiveData = SingleLiveEvent<Int>()
     val burnEventInProgress = MutableLiveData<BurnEvent?>()
+    val toastLiveData = SingleLiveEvent<String>()
 
     @Inject
     lateinit var interactor: Interactor
@@ -49,19 +49,16 @@ class MainFragmentViewModel: ViewModel() {
     }
 
     fun startBurn() {
-        val burnEvent = BurnEvent(
-            productsId = interactor.getBurnList(),
-            caloriesBurned = 0
-        )
-        startBurn(burnEvent)
-    }
-
-    private fun startBurn(burnEvent: BurnEvent) {
-        viewModelScope.launch(Dispatchers.Main) {
-            if (interactor.startBurnEvent(burnEvent)) {
-                profileStatusLiveData.postValue(Constants.PROFILE_IS_FILLED)
+        viewModelScope.launch(Dispatchers.Default) {
+            if (interactor.isProfileExist()) {
+                val burnlist = burnListLiveData.value
+                    if (burnlist!=null && burnlist.isNotEmpty()) {
+                        interactor.startBurnEvent()
+                    } else {
+                        toastLiveData.postValue(Constants.BURNLIST_IS_NOT_FILLED_TEXT)
+                    }
             } else {
-                profileStatusLiveData.postValue(Constants.PROFILE_IS_NOT_FILLED)
+                toastLiveData.postValue(Constants.PROFILE_IS_NOT_FILLED_TEXT)
             }
         }
     }

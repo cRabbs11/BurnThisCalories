@@ -11,8 +11,6 @@ class CaloriesCalculator(private val profile: Profile, private val burnEvent: Bu
     private var weight = 0.0
     private val SM_TO_KM_KOEF = 10000 //коэф для пересчета расстояния из см в км
     private val STEP_LENGTH_KOEF = 0.41
-
-    private var savedBurnedCalories = 0
     private var allCalories = 0
 
     init {
@@ -23,22 +21,17 @@ class CaloriesCalculator(private val profile: Profile, private val burnEvent: Bu
         this.burnEvent.productsId.forEach {
             allCalories+=it.calory
         }
-        savedBurnedCalories = 0
     }
 
     fun isRunning(): Boolean {
         return isRunning
     }
 
-    fun stopRunning() {
-        isRunning = false
-    }
-
     fun getAllCalories(): Int {
         return allCalories
     }
 
-    fun getBurnedCalories(steps: Int): Int {
+    private fun fromStepsToCalories(steps: Int): Int {
         //количесвто сожженных килокалорий нв километр: 0,5 х вec чeлoвeka (kг) х paccтoяниe (km) = coжжeнныe Kkaл
 
         val caloriesBurned = weight*0.5*(stepDistance*steps)/SM_TO_KM_KOEF
@@ -46,50 +39,18 @@ class CaloriesCalculator(private val profile: Profile, private val burnEvent: Bu
     }
 
     fun getCaloriesLeft(steps: Int): Int {
-        val burnedCalories = getBurnedCalories(steps-stepsInStart)
+        val burnedCalories = fromStepsToCalories(steps-stepsInStart)
         return allCalories - burnedCalories
     }
 
-    fun setStartedStep(step: Int) {
-        var isRunning = true
-        stepsInStart
+    fun getCaloriesBurned(steps: Int): Int {
+        return fromStepsToCalories(steps-stepsInStart)
     }
 
-    //override fun onSensorChanged(event: SensorEvent?) {
-    //    MainScope().launch(Dispatchers.IO) {
-    //    val value = event!!.values[0].toInt()
-    //    if (!isRunning) {
-    //        isRunning = true
-    //        stepsInStart = value
-    //        savedBurnedCalories = burnEvent.caloriesBurned
-    //        println("saved isNOTRunning = ${savedBurnedCalories} calories")
-    //    } else {
-    //        println("saved isRunning = ${savedBurnedCalories} calories")
-    //    }
-    //    val steps = value-stepsInStart
-    //    println("stepsCount = ${steps}")
-    //    val caloriesBurned = getBurnedCalories(steps) + savedBurnedCalories
-    //    val caloriesLeft = allCalories - caloriesBurned
-    //    println("caloriesLeft = ${caloriesLeft}")
-    //    var status = Constants.BURN_EVENT_STATUS_IN_PROGRESS
-    //    if (caloriesLeft<=0) {
-    //        println("done!")
-    //        status = Constants.BURN_EVENT_STATUS_DONE
-    //        stopCalculator()
-    //        isRunning = false
-    //    }
-//
-    //    val updatedBurnEvent = BurnEvent(
-    //        id = burnEvent.id,
-    //        productsId = burnEvent.productsId,
-    //        caloriesBurned = caloriesBurned,
-    //        eventStatus = status
-    //    )
-    //    println("burnEvent = ${burnEvent.toString()}")
-    //        val result = repository.updateBurnEvent(updatedBurnEvent)
-    //        println("updateResult = ${result}")
-    //    }
-    //}
+    fun setStartedStep(step: Int) {
+        isRunning = true
+        stepsInStart = step
+    }
 
     interface CaloriesCalculatorBuilder {
         fun setProfile(profile: Profile) : CaloriesCalculatorBuilder

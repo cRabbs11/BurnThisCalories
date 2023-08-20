@@ -1,17 +1,20 @@
 package com.ekochkov.burnthiscalories.domain
 
 import android.content.Context
+import android.content.Intent
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.ekochkov.burnthiscalories.data.CaloriesRepository
 import com.ekochkov.burnthiscalories.data.entity.BurnEvent
 import com.ekochkov.burnthiscalories.data.entity.Product
 import com.ekochkov.burnthiscalories.data.entity.Profile
-import com.ekochkov.burnthiscalories.util.CaloriesCalculator
+import com.ekochkov.burnthiscalories.services.BurnEventForegroundService
 import com.ekochkov.burnthiscalories.util.Constants
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.lang.Exception
 
-class Interactor(private val repository: CaloriesRepository, private val caloriesCalculator: CaloriesCalculator, private val context: Context) {
+class Interactor(private val repository: CaloriesRepository, private val context: Context) {
 
     private var productToBurnList = mutableListOf<Product>()
     private var burnListFlow = MutableSharedFlow<List<Product>>()

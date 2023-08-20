@@ -56,6 +56,10 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
         return repository.ifProfileExist()
     }
 
+    suspend fun getProfile(): Profile? {
+        return repository.getProfile()
+    }
+
     suspend fun getProducts(): List<Product> {
         return repository.getProducts()
     }

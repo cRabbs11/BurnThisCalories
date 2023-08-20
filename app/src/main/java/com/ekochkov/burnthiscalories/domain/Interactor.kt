@@ -20,6 +20,7 @@ class Interactor(private val repository: CaloriesRepository, private val context
     private var burnListFlow = MutableSharedFlow<List<Product>>()
     private var finishEventJob: Job? = null
     lateinit var intent: Intent
+    private var burnEventJob: Job? = null
 
     fun addProductToBurnList(product: Product) {
         productToBurnList.add(product)
@@ -90,18 +91,25 @@ class Interactor(private val repository: CaloriesRepository, private val context
         return productToBurnList
     }
 
-    suspend fun startBurnEvent(burnEvent: BurnEvent): Boolean {
-        return if (repository.ifProfileExist()) {
-            println("start burning")
-            caloriesCalculator.setProfile(repository.getProfile()!!)
-            saveBurnEvent(burnEvent)
-            val startedBurnEvent = getBurnEventInProgress()!!
-            startStepCountSensor(startedBurnEvent)
-            clearProductToBurnList()
-            true
-        } else {
-            false
+    suspend fun isBurnEventRunning(): Boolean {
+        return (repository.getBurnEventInProgress()!=null)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun startBurnEvent(): Result<Unit> {
+        if (isProfileExist() && !isBurnEventRunning()) {
+            burnEventJob = CoroutineScope(Job()).launch(Dispatchers.Default) {
+                val burnEvent = BurnEvent(
+                    productsId = productToBurnList,
+                    caloriesBurned = 0
+                )
+                saveBurnEvent(burnEvent)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService()
+                }
+            }
         }
+        return Result.success(Unit)
     }
 
     suspend fun resumeBurnEvent(burnEvent: BurnEvent) {

@@ -108,15 +108,6 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
         }
     }
 
-
-    private fun startStepCountSensor(burnEvent: BurnEvent) {
-        caloriesCalculator.startCalculator(burnEvent)
-    }
-
-    fun stopBurnEvent() {
-        caloriesCalculator.stopCalculator()
-    }
-
     suspend fun saveBurnEvent(burnEvent: BurnEvent) {
         repository.saveBurnEvent(burnEvent)
     }

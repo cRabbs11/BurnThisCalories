@@ -147,4 +147,17 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
     }
 
     fun getBurnEventsByStatusFlow(eventStatus: Int) = repository.getBurnEventsByStatusFlow(eventStatus)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun startForegroundService() {
+        intent = Intent(context, BurnEventForegroundService::class.java) // Build the intent for the service
+        context.startForegroundService(intent)
+    }
+
+    fun stopForegroundService() {
+        intent?.let {
+            println("stop foreground service")
+            context.stopService(it)
+        }
+    }
 }

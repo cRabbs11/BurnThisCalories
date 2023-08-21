@@ -4,9 +4,6 @@ import com.ekochkov.burnthiscalories.data.entity.Profile
 
 class CaloriesCalculator(private val profile: Profile, private val burnEvent: BurnEvent) {
 
-    private var isRunning = false
-    var stepsInStart = 0
-
     private var stepDistance = 0.0
     private var weight = 0.0
     private val SM_TO_KM_KOEF = 10000 //коэф для пересчета расстояния из см в км
@@ -23,33 +20,13 @@ class CaloriesCalculator(private val profile: Profile, private val burnEvent: Bu
         }
     }
 
-    fun isRunning(): Boolean {
-        return isRunning
-    }
-
     fun getAllCalories(): Int {
         return allCalories
     }
 
-    private fun fromStepsToCalories(steps: Int): Int {
-        //количесвто сожженных килокалорий нв километр: 0,5 х вec чeлoвeka (kг) х paccтoяниe (km) = coжжeнныe Kkaл
-
+    fun fromStepsToCalory(steps: Int): Int {
         val caloriesBurned = weight*0.5*(stepDistance*steps)/SM_TO_KM_KOEF
         return caloriesBurned.toInt()
-    }
-
-    fun getCaloriesLeft(steps: Int): Int {
-        val burnedCalories = fromStepsToCalories(steps-stepsInStart)
-        return allCalories - burnedCalories
-    }
-
-    fun getCaloriesBurned(steps: Int): Int {
-        return fromStepsToCalories(steps-stepsInStart)
-    }
-
-    fun setStartedStep(step: Int) {
-        isRunning = true
-        stepsInStart = step
     }
 
     interface CaloriesCalculatorBuilder {

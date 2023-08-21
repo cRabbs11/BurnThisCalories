@@ -31,6 +31,9 @@ class BurnEventForegroundService: Service(), SensorEventListener {
     lateinit var sensor: Sensor
     lateinit var notificationManager: NotificationManager
     private lateinit var currentBurnEvent: BurnEvent
+    private var startedCalories = 0
+    private var startedSteps = 0
+    private var isRunning = false
 
     override fun onCreate() {
         super.onCreate()
@@ -121,16 +124,19 @@ class BurnEventForegroundService: Service(), SensorEventListener {
     override fun onSensorChanged(event: SensorEvent?) {
 
         val value = event!!.values[0].toInt()
-        if (!caloriesCalculator.isRunning()) {
-            caloriesCalculator.setStartedStep(value)
+        if (!isRunning) {
+            isRunning = true
+            startedCalories = currentBurnEvent.caloriesBurned
+            startedSteps = value
         }
-        val caloriesLeft = caloriesCalculator.getCaloriesLeft(value)
+        val caloriesBurned = caloriesCalculator.fromStepsToCalory(value-startedSteps) + startedCalories
+        val caloriesLeft = caloriesCalculator.getAllCalories()-caloriesBurned
             if (caloriesLeft>=0) {
                 notificationManager.notify(1, getNotification(Constants.BURN_EVENT_IS_RUNNING, "ккал осталось...$caloriesLeft"))
-                saveBurnEvent(Constants.BURN_EVENT_STATUS_IN_PROGRESS, caloriesCalculator.getCaloriesBurned(value))
+                saveBurnEvent(Constants.BURN_EVENT_STATUS_IN_PROGRESS, caloriesBurned)
             } else {
                 notificationManager.notify(1, getNotification(Constants.BURN_EVENT_IS_RUNNING, "событие закончено!"))
-                saveBurnEvent(Constants.BURN_EVENT_STATUS_DONE, caloriesCalculator.getCaloriesBurned(value))
+                saveBurnEvent(Constants.BURN_EVENT_STATUS_DONE, caloriesBurned)
                 stopSelf()
             }
     }

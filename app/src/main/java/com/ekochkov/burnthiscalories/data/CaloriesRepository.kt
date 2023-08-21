@@ -1,16 +1,10 @@
 package com.ekochkov.burnthiscalories.data
 
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
 import com.ekochkov.burnthiscalories.data.dao.ProfileDao
 import com.ekochkov.burnthiscalories.data.entity.*
 import com.ekochkov.burnthiscalories.util.Constants
-import com.ekochkov.burnthiscalories.services.BurnCaloriesService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 
 
 class CaloriesRepository(private val context: Context, private val profileDao: ProfileDao) {

@@ -79,20 +79,6 @@ class CaloriesRepository(private val context: Context, private val profileDao: P
         return calories
     }
 
-    fun startBurnService() {
-
-        //Создаем интент
-        MainScope().launch(Dispatchers.IO) {
-            val intent = Intent(context, BurnCaloriesService::class.java)
-            val bundle = Bundle()
-            bundle.putSerializable(Constants.PROFILE_KEY, getProfile())
-            bundle.putSerializable(Constants.BURN_LIST_KEY, burnList)
-            intent.putExtra(Constants.BUNDLE_KEY, bundle)
-            //Запускаем сервис, передав в метод интент
-            context.startService(intent)
-        }
-    }
-
     suspend fun saveBurnEvent(burnEvent: BurnEvent) {
         profileDao.saveBurnEvent(burnEvent)
     }

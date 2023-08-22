@@ -42,9 +42,15 @@ class BurnEventForegroundService: Service(), SensorEventListener {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        createNotificationChannel()
-        startForeground(1, getNotification(Constants.BURN_EVENT_IS_RUNNING, "ккал осталось..."))
-        startCaloriesCalculator()
+        GlobalScope.launch(Dispatchers.Default) {
+            val burnEventId = intent?.getIntExtra(Constants.BURN_EVENT_ID_KEY, -1) as Int
+            burnEventId.let {
+                currentBurnEvent = interactor.getBurnEvent(burnEventId)!!
+                createNotificationChannel()
+                startForeground(1, getNotification(Constants.BURN_EVENT_IS_RUNNING, "ккал осталось..."))
+                startCaloriesCalculator()
+            }
+        }
         return START_NOT_STICKY
     }
 
@@ -78,12 +84,10 @@ class BurnEventForegroundService: Service(), SensorEventListener {
 
     private fun startCaloriesCalculator() {
         GlobalScope.launch(Dispatchers.Default) {
-            val burnEvent = interactor.getBurnEventInProgress()
             val profile = interactor.getProfile()
-            if (burnEvent!=null && profile!=null) {
-                currentBurnEvent = burnEvent
+            if (profile!=null) {
                 caloriesCalculator = CaloriesCalculator.Builder()
-                    .setBurnEvent(burnEvent)
+                    .setBurnEvent(currentBurnEvent)
                     .setProfile(profile)
                     .build()
                 startSensor()

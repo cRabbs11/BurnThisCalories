@@ -5,6 +5,7 @@ object Constants {
     const val BUNDLE_KEY = "Bundle"
     const val BURN_LIST_KEY = "BurnList"
     const val BURN_EVENT_KEY = "burnEvent"
+    const val BURN_EVENT_ID_KEY = "burnEventId"
 
     const val BURN_EVENT_STATUS_DONE = 0
     const val BURN_EVENT_STATUS_IN_PROGRESS = 1

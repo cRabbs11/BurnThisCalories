@@ -40,7 +40,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/resume_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="@dimen/margin_40" />
+        android:layout_marginBottom="@dimen/margin_40"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/resume_btn"
@@ -50,6 +51,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/stop_btn"
-        android:layout_marginBottom="@dimen/margin_40" />
+        android:layout_marginBottom="@dimen/margin_40"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

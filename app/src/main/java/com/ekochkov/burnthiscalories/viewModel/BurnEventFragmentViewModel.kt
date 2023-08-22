@@ -7,6 +7,7 @@ import com.ekochkov.burnthiscalories.App
 import com.ekochkov.burnthiscalories.data.entity.BurnEvent
 import com.ekochkov.burnthiscalories.domain.Interactor
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,7 +28,13 @@ class BurnEventFragmentViewModel(private val burnEventId: Int): ViewModel() {
         }
     }
 
-    fun finishEvent() {
-        interactor.finishEvent()
+    fun resumeEvent() {
+        GlobalScope.launch(Dispatchers.Default) {
+            interactor.resumeBurnEvent(burnEventId)
+        }
+    }
+
+    fun stopEvent() {
+        interactor.stopBurnEvent()
     }
 }

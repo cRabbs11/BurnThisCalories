@@ -33,13 +33,23 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button
-        android:id="@+id/finish_btn"
-        android:text="финиш"
+        android:id="@+id/stop_btn"
+        android:text="@string/stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/resume_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="@dimen/margin_40" />
+
+    <Button
+        android:id="@+id/resume_btn"
+        android:text="@string/resume"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="@dimen/margin_40"
-        android:visibility="gone"/>
+        app:layout_constraintEnd_toStartOf="@id/stop_btn"
+        android:layout_marginBottom="@dimen/margin_40" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

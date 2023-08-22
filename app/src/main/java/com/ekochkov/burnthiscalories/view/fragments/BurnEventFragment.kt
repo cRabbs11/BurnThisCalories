@@ -69,8 +69,12 @@ class BurnEventFragment: Fragment() {
             updateRecyclerView(burnEvent.productsId)
         }
 
-        binding.finishBtn.setOnClickListener {
-            viewModel.finishEvent()
+        binding.stopBtn.setOnClickListener {
+            viewModel.stopEvent()
+        }
+
+        binding.resumeBtn.setOnClickListener {
+            viewModel.resumeEvent()
         }
     }
 

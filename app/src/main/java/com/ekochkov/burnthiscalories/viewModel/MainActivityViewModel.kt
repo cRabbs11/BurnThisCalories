@@ -19,10 +19,10 @@ class MainActivityViewModel: ViewModel() {
     }
 
     fun tryLaunchStepCount() {
-        viewModelScope.launch(Dispatchers.IO) {
-            interactor.getBurnEventInProgress()?.let {
-                interactor.resumeBurnEvent(it)
-            }
-        }
+        //viewModelScope.launch(Dispatchers.IO) {
+        //    interactor.getBurnEventInProgress()?.let {
+        //        interactor.resumeBurnEvent(it)
+        //    }
+        //}
     }
 }

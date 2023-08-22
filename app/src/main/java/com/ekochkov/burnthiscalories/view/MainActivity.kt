@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.tryLaunchStepCount()
+        //viewModel.tryLaunchStepCount()
     }
 
 

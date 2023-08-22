@@ -92,4 +92,8 @@ class CaloriesRepository(private val context: Context, private val profileDao: P
     fun getBurnEventFlow(id: Int) = profileDao.getBurnEventFlow(id)
 
     fun getBurnEventsByStatusFlow(eventStatus: Int) = profileDao.getBurnEventsByStatusFlow(eventStatus)
+
+    suspend fun getLastBurnEvent(): BurnEvent? {
+        return profileDao.getBurnEvents().last()
+    }
 }

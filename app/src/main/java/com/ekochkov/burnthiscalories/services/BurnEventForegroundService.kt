@@ -23,6 +23,14 @@ import javax.inject.Inject
 
 class BurnEventForegroundService: Service(), SensorEventListener {
 
+    companion object {
+        private var serviceIsRunning = false
+
+        fun isRunning(): Boolean {
+            return serviceIsRunning
+        }
+    }
+
     @Inject
     lateinit var interactor: Interactor
 
@@ -33,11 +41,12 @@ class BurnEventForegroundService: Service(), SensorEventListener {
     private lateinit var currentBurnEvent: BurnEvent
     private var startedCalories = 0
     private var startedSteps = 0
-    private var isRunning = false
+    private var sensorIsRunning = false
 
     override fun onCreate() {
         super.onCreate()
         App.instance.dagger.inject(this)
+        serviceIsRunning = true
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -100,6 +109,7 @@ class BurnEventForegroundService: Service(), SensorEventListener {
     override fun onDestroy() {
         super.onDestroy()
         stopSensor()
+        serviceIsRunning = false
     }
 
     private fun saveBurnEvent(status: Int, caloriesBurned: Int) {
@@ -128,8 +138,8 @@ class BurnEventForegroundService: Service(), SensorEventListener {
     override fun onSensorChanged(event: SensorEvent?) {
 
         val value = event!!.values[0].toInt()
-        if (!isRunning) {
-            isRunning = true
+        if (!sensorIsRunning) {
+            sensorIsRunning = true
             startedCalories = currentBurnEvent.caloriesBurned
             startedSteps = value
         }

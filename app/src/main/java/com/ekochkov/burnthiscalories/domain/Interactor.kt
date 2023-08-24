@@ -19,7 +19,7 @@ class Interactor(private val repository: CaloriesRepository, private val context
     private var productToBurnList = mutableListOf<Product>()
     private var burnListFlow = MutableSharedFlow<List<Product>>()
     private var finishEventJob: Job? = null
-    lateinit var intent: Intent
+    var intent: Intent? = null
     private var burnEventJob: Job? = null
     private var isBurnEventServiceIsRunning = false
 

@@ -17,9 +17,9 @@ import java.lang.Exception
 class Interactor(private val repository: CaloriesRepository, private val context: Context) {
 
     private var productToBurnList = mutableListOf<Product>()
-    private var burnListFlow = MutableSharedFlow<List<Product>>()
+    private var burnListFlow = MutableStateFlow<List<Product>>(productToBurnList)
     private var finishEventJob: Job? = null
-    var intent: Intent? = null
+    private var intent: Intent? = null
     private var burnEventJob: Job? = null
     private var isBurnEventServiceIsRunning = false
 
@@ -42,21 +42,28 @@ class Interactor(private val repository: CaloriesRepository, private val context
         }
     }
 
-    fun clearProductToBurnList() {
-        productToBurnList.clear()
+    fun removeProductFromBurnList(product: Product) {
         MainScope().launch {
+            val newBurnList = arrayListOf<Product>()
+            productToBurnList.forEach {
+                newBurnList.add(it)
+            }
+            newBurnList.remove(product)
+            productToBurnList = newBurnList
+            burnListFlow.emit(productToBurnList)
+        }
+    }
+
+    fun clearProductToBurnList() {
+        MainScope().launch {
+            val newBurnList = arrayListOf<Product>()
+            productToBurnList = newBurnList
             burnListFlow.emit(productToBurnList)
         }
     }
 
     fun getProductsToBurnStateFlow(): Flow<List<Product>> {
-        return burnListFlow
-    }
-
-    fun getProductsToBurnFlow(): Flow<List<Product>> {
-        return flow {
-            emit(productToBurnList)
-        }
+        return burnListFlow.asStateFlow()
     }
 
     fun getProfileFlow() = repository.getProfileFlow()
@@ -115,6 +122,7 @@ class Interactor(private val repository: CaloriesRepository, private val context
                 saveBurnEvent(burnEvent)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     startForegroundService(repository.getLastBurnEvent()!!.id)
+                    clearProductToBurnList()
                 }
             }
         }

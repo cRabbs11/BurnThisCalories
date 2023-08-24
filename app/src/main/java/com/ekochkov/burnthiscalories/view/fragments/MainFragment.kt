@@ -63,8 +63,8 @@ class MainFragment: Fragment() {
         }
 
         productAdapter = ProductListAdapter(object: OnItemClickListener<Product> {
-            override fun onItemClick(t: Product) {
-
+            override fun onItemClick(product: Product) {
+                viewModel.removeProductFromBurnList(product)
             }
         })
         binding.recyclerView.adapter = productAdapter

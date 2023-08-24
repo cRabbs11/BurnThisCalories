@@ -48,6 +48,12 @@ class MainFragmentViewModel: ViewModel() {
         }
     }
 
+    fun removeProductFromBurnList(product: Product) {
+        viewModelScope.launch(Dispatchers.IO) {
+            interactor.removeProductFromBurnList(product)
+        }
+    }
+
     fun startBurn() {
         viewModelScope.launch(Dispatchers.Default) {
             if (interactor.isProfileExist()) {

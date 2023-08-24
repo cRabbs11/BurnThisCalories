@@ -21,6 +21,19 @@ class Interactor(private val repository: CaloriesRepository, private val context
     private var finishEventJob: Job? = null
     lateinit var intent: Intent
     private var burnEventJob: Job? = null
+    private var isBurnEventServiceIsRunning = false
+
+    init {
+        MainScope().launch(Dispatchers.IO) {
+            getIsBurnEventServiceIsRunningStateFlow().collect{
+                isBurnEventServiceIsRunning = it
+            }
+        }
+    }
+
+    fun getIsBurnEventServiceIsRunningStateFlow(): Flow<Boolean>  {
+        return BurnEventForegroundService.isServiceRunningFlow().asStateFlow()
+    }
 
     fun addProductToBurnList(product: Product) {
         productToBurnList.add(product)

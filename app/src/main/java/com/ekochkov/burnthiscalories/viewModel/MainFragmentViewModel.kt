@@ -40,7 +40,7 @@ class MainFragmentViewModel: ViewModel() {
             }
 
             this.launch(Dispatchers.IO) {
-                getProductsToBurnFlow().collect {
+                interactor.getProductsToBurnStateFlow().collect {
                     println("listtoBurn2 = ${it.size}")
                     burnListLiveData.postValue(it)
                 }
@@ -62,8 +62,6 @@ class MainFragmentViewModel: ViewModel() {
             }
         }
     }
-
-    fun getProductsToBurnFlow() = interactor.getProductsToBurnStateFlow()
 
     private fun isBurnEventInProgress(burnEvent: BurnEvent?): Boolean {
         return (burnEvent!=null && burnEvent.eventStatus==Constants.BURN_EVENT_STATUS_IN_PROGRESS)

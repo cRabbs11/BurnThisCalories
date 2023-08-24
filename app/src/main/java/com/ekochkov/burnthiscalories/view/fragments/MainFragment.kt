@@ -23,7 +23,6 @@ import com.ekochkov.burnthiscalories.data.entity.Product
 import com.ekochkov.burnthiscalories.databinding.FragmentMainBinding
 import com.ekochkov.burnthiscalories.diffs.ProductDiff
 import com.ekochkov.burnthiscalories.util.Constants
-import com.ekochkov.burnthiscalories.util.Constants.PROFILE_IS_NOT_FILLED_TEXT
 import com.ekochkov.burnthiscalories.util.OnItemClickListener
 import com.ekochkov.burnthiscalories.view.adapters.ProductListAdapter
 import com.ekochkov.burnthiscalories.view.fragments.ProductsFragment.Companion.FLAG_ADD_PRODUCTS_TO_BURN_EVENT
@@ -110,13 +109,9 @@ class MainFragment: Fragment() {
             }
         }
 
-        viewModel.burnEventInProgress.observe(viewLifecycleOwner) {
-            burnEventInProgressId = if (it!=null) {
-                it.id
-            } else {
-                -1
-            }
-            updateButtons(it)
+        viewModel.burnEventInProgress.observe(viewLifecycleOwner) { burnEvent ->
+            burnEventInProgressId = burnEvent?.id ?: -1
+            updateButtons(burnEvent)
         }
     }
 

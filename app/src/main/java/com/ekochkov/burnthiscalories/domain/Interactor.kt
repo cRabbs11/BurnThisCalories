@@ -104,10 +104,6 @@ class Interactor(private val repository: CaloriesRepository, private val context
         return productToBurnList
     }
 
-    suspend fun isBurnEventRunning(): Boolean {
-        return (repository.getBurnEventInProgress()!=null)
-    }
-
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun startBurnEvent(): Result<Unit> {
         if (isProfileExist() && !isBurnEventServiceIsRunning) {
@@ -150,16 +146,6 @@ class Interactor(private val repository: CaloriesRepository, private val context
     suspend fun getBurnEvent(id: Int) = repository.getBurnEvent(id)
 
     fun stopBurnEvent() {
-       //finishEventJob = CoroutineScope(Job()).launch (Dispatchers.IO){
-       //    var burnEvent = getBurnEventInProgress()
-       //    val updatedBurnEvent = BurnEvent(
-       //        id = burnEvent!!.id,
-       //        productsId = burnEvent.productsId,
-       //        caloriesBurned = 7227,
-       //        eventStatus = Constants.BURN_EVENT_STATUS_DONE
-       //    )
-       //    repository.updateBurnEvent(updatedBurnEvent)
-       //}
         stopForegroundService()
     }
 
@@ -177,7 +163,7 @@ class Interactor(private val repository: CaloriesRepository, private val context
         context.startForegroundService(intent)
     }
 
-    fun stopForegroundService() {
+    private fun stopForegroundService() {
         intent?.let {
             println("stop foreground service")
             context.stopService(it)

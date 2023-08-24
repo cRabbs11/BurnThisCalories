@@ -1,18 +1,17 @@
 package com.ekochkov.burnthiscalories.view.fragments
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ekochkov.burnthiscalories.R
+import com.ekochkov.burnthiscalories.data.entity.BurnEvent
 import com.ekochkov.burnthiscalories.data.entity.Product
 import com.ekochkov.burnthiscalories.databinding.FragmentBurnEventBinding
 import com.ekochkov.burnthiscalories.diffs.ProductDiff
@@ -28,6 +27,7 @@ class BurnEventFragment: Fragment() {
     lateinit var binding: FragmentBurnEventBinding
     private val viewModel: BurnEventFragmentViewModel by viewModels { factory(burnEventId = arguments?.getInt(getString(
         R.string.argument_burn_event_id)))}
+    private lateinit var burnEvent: BurnEvent
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,6 +51,7 @@ class BurnEventFragment: Fragment() {
         binding.recyclerView.addItemDecoration(dividerItemDecoration)
 
         viewModel.burnEventLiveData.observe(viewLifecycleOwner) { burnEvent ->
+            this.burnEvent = burnEvent
             if (burnEvent.eventStatus==Constants.BURN_EVENT_STATUS_IN_PROGRESS) {
                 binding.root.background = ContextCompat.getDrawable(requireContext(), R.drawable.background_white_yellow)
                 binding.burnEventStatusTextView.text = getString(R.string.burn_event_status_in_progress)
@@ -69,8 +70,20 @@ class BurnEventFragment: Fragment() {
             updateRecyclerView(burnEvent.productsId)
         }
 
-        binding.finishBtn.setOnClickListener {
-            viewModel.finishEvent()
+        viewModel.isBurnEventServiceCanRun.observe(viewLifecycleOwner) { isCanRun ->
+            if (isCanRun) {
+                binding.resumeBtn.visibility = View.VISIBLE
+            } else {
+                binding.resumeBtn.visibility = View.GONE
+            }
+        }
+
+        binding.stopBtn.setOnClickListener {
+            viewModel.stopEvent()
+        }
+
+        binding.resumeBtn.setOnClickListener {
+            viewModel.resumeEvent()
         }
     }
 

@@ -1,21 +1,39 @@
 package com.ekochkov.burnthiscalories.domain
 
 import android.content.Context
+import android.content.Intent
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.ekochkov.burnthiscalories.data.CaloriesRepository
 import com.ekochkov.burnthiscalories.data.entity.BurnEvent
 import com.ekochkov.burnthiscalories.data.entity.Product
 import com.ekochkov.burnthiscalories.data.entity.Profile
-import com.ekochkov.burnthiscalories.util.CaloriesCalculator
+import com.ekochkov.burnthiscalories.services.BurnEventForegroundService
 import com.ekochkov.burnthiscalories.util.Constants
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.lang.Exception
 
-class Interactor(private val repository: CaloriesRepository, private val caloriesCalculator: CaloriesCalculator, private val context: Context) {
+class Interactor(private val repository: CaloriesRepository, private val context: Context) {
 
     private var productToBurnList = mutableListOf<Product>()
-    private var burnListFlow = MutableSharedFlow<List<Product>>()
+    private var burnListFlow = MutableStateFlow<List<Product>>(productToBurnList)
     private var finishEventJob: Job? = null
+    private var intent: Intent? = null
+    private var burnEventJob: Job? = null
+    private var isBurnEventServiceIsRunning = false
+
+    init {
+        MainScope().launch(Dispatchers.IO) {
+            getIsBurnEventServiceIsRunningStateFlow().collect{
+                isBurnEventServiceIsRunning = it
+            }
+        }
+    }
+
+    fun getIsBurnEventServiceIsRunningStateFlow(): Flow<Boolean>  {
+        return BurnEventForegroundService.isServiceRunningFlow().asStateFlow()
+    }
 
     fun addProductToBurnList(product: Product) {
         productToBurnList.add(product)
@@ -24,21 +42,28 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
         }
     }
 
-    fun clearProductToBurnList() {
-        productToBurnList.clear()
+    fun removeProductFromBurnList(product: Product) {
         MainScope().launch {
+            val newBurnList = arrayListOf<Product>()
+            productToBurnList.forEach {
+                newBurnList.add(it)
+            }
+            newBurnList.remove(product)
+            productToBurnList = newBurnList
+            burnListFlow.emit(productToBurnList)
+        }
+    }
+
+    fun clearProductToBurnList() {
+        MainScope().launch {
+            val newBurnList = arrayListOf<Product>()
+            productToBurnList = newBurnList
             burnListFlow.emit(productToBurnList)
         }
     }
 
     fun getProductsToBurnStateFlow(): Flow<List<Product>> {
-        return burnListFlow
-    }
-
-    fun getProductsToBurnFlow(): Flow<List<Product>> {
-        return flow {
-            emit(productToBurnList)
-        }
+        return burnListFlow.asStateFlow()
     }
 
     fun getProfileFlow() = repository.getProfileFlow()
@@ -50,6 +75,14 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
             return Result.failure(e)
         }
         return Result.success(Unit)
+    }
+
+    suspend fun isProfileExist(): Boolean {
+        return repository.ifProfileExist()
+    }
+
+    suspend fun getProfile(): Profile? {
+        return repository.getProfile()
     }
 
     suspend fun getProducts(): List<Product> {
@@ -78,35 +111,34 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
         return productToBurnList
     }
 
-    suspend fun startBurnEvent(burnEvent: BurnEvent): Boolean {
-        return if (repository.ifProfileExist()) {
-            println("start burning")
-            caloriesCalculator.setProfile(repository.getProfile()!!)
-            saveBurnEvent(burnEvent)
-            val startedBurnEvent = getBurnEventInProgress()!!
-            startStepCountSensor(startedBurnEvent)
-            clearProductToBurnList()
-            true
-        } else {
-            false
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun startBurnEvent(): Result<Unit> {
+        if (isProfileExist() && !isBurnEventServiceIsRunning) {
+            burnEventJob = CoroutineScope(Job()).launch(Dispatchers.Default) {
+                val burnEvent = BurnEvent(
+                    productsId = productToBurnList,
+                    caloriesBurned = 0
+                )
+                saveBurnEvent(burnEvent)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(repository.getLastBurnEvent()!!.id)
+                    clearProductToBurnList()
+                }
+            }
         }
+        return Result.success(Unit)
     }
 
-    suspend fun resumeBurnEvent(burnEvent: BurnEvent) {
+    suspend fun resumeBurnEvent(burnEventId: Int) {
         println("resume burning")
-        if (repository.ifProfileExist()) {
-            caloriesCalculator.setProfile(repository.getProfile()!!)
-            startStepCountSensor(burnEvent)
+        if (!isBurnEventServiceIsRunning) {
+            println("foreground service is not created, run it!")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(burnEventId)
+            }
+        } else {
+            println("foreground service already running")
         }
-    }
-
-
-    private fun startStepCountSensor(burnEvent: BurnEvent) {
-        caloriesCalculator.startCalculator(burnEvent)
-    }
-
-    fun stopBurnEvent() {
-        caloriesCalculator.stopCalculator()
     }
 
     suspend fun saveBurnEvent(burnEvent: BurnEvent) {
@@ -121,18 +153,28 @@ class Interactor(private val repository: CaloriesRepository, private val calorie
 
     suspend fun getBurnEvent(id: Int) = repository.getBurnEvent(id)
 
-    fun finishEvent() {
-       finishEventJob = CoroutineScope(Job()).launch (Dispatchers.IO){
-           var burnEvent = getBurnEventInProgress()
-           val updatedBurnEvent = BurnEvent(
-               id = burnEvent!!.id,
-               productsId = burnEvent.productsId,
-               caloriesBurned = 7227,
-               eventStatus = Constants.BURN_EVENT_STATUS_DONE
-           )
-           repository.updateBurnEvent(updatedBurnEvent)
-       }
+    fun stopBurnEvent() {
+        stopForegroundService()
+    }
+
+    suspend fun updateBurnEvent(burnEvent: BurnEvent) {
+        repository.updateBurnEvent(burnEvent)
     }
 
     fun getBurnEventsByStatusFlow(eventStatus: Int) = repository.getBurnEventsByStatusFlow(eventStatus)
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun startForegroundService(burnEventId: Int) {
+        var currentIntent = Intent(context, BurnEventForegroundService::class.java) // Build the intent for the service
+        currentIntent.putExtra(Constants.BURN_EVENT_ID_KEY, burnEventId)
+        intent = currentIntent
+        context.startForegroundService(intent)
+    }
+
+    private fun stopForegroundService() {
+        intent?.let {
+            println("stop foreground service")
+            context.stopService(it)
+        }
+    }
 }

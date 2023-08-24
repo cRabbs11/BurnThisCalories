@@ -4,6 +4,8 @@ object Constants {
     const val PROFILE_KEY = "Profile"
     const val BUNDLE_KEY = "Bundle"
     const val BURN_LIST_KEY = "BurnList"
+    const val BURN_EVENT_KEY = "burnEvent"
+    const val BURN_EVENT_ID_KEY = "burnEventId"
 
     const val BURN_EVENT_STATUS_DONE = 0
     const val BURN_EVENT_STATUS_IN_PROGRESS = 1
@@ -30,4 +32,11 @@ object Constants {
     const val PROFILE_IS_NOT_FILLED = 0
     const val PROFILE_IS_FILLED = 1
     const val PROFILE_IS_NOT_FILLED_TEXT = "Профиль не заполнен"
+
+    const val BURNLIST_IS_NOT_FILLED_TEXT = "Список продуктов отсутствует"
+
+    const val BURN_EVENT_IS_RUNNING = "сжигание калорий запущено"
+
+    const val BURN_EVENT_SERVICE_CHANNEL_ID = "burnEventService"
+    const val BURN_EVENT_SERVICE_CHANNEL_NAME = "burnEventService"
 }

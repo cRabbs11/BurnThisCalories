@@ -19,8 +19,8 @@ import javax.inject.Inject
 class MainFragmentViewModel: ViewModel() {
 
     val burnListLiveData = MutableLiveData<List<Product>>()
-    val profileStatusLiveData = SingleLiveEvent<Int>()
     val burnEventInProgress = MutableLiveData<BurnEvent?>()
+    val toastLiveData = SingleLiveEvent<String>()
 
     @Inject
     lateinit var interactor: Interactor
@@ -40,7 +40,7 @@ class MainFragmentViewModel: ViewModel() {
             }
 
             this.launch(Dispatchers.IO) {
-                getProductsToBurnFlow().collect {
+                interactor.getProductsToBurnStateFlow().collect {
                     println("listtoBurn2 = ${it.size}")
                     burnListLiveData.postValue(it)
                 }
@@ -48,25 +48,26 @@ class MainFragmentViewModel: ViewModel() {
         }
     }
 
-    fun startBurn() {
-        val burnEvent = BurnEvent(
-            productsId = interactor.getBurnList(),
-            caloriesBurned = 0
-        )
-        startBurn(burnEvent)
-    }
-
-    private fun startBurn(burnEvent: BurnEvent) {
-        viewModelScope.launch(Dispatchers.Main) {
-            if (interactor.startBurnEvent(burnEvent)) {
-                profileStatusLiveData.postValue(Constants.PROFILE_IS_FILLED)
-            } else {
-                profileStatusLiveData.postValue(Constants.PROFILE_IS_NOT_FILLED)
-            }
+    fun removeProductFromBurnList(product: Product) {
+        viewModelScope.launch(Dispatchers.IO) {
+            interactor.removeProductFromBurnList(product)
         }
     }
 
-    fun getProductsToBurnFlow() = interactor.getProductsToBurnStateFlow()
+    fun startBurn() {
+        viewModelScope.launch(Dispatchers.Default) {
+            if (interactor.isProfileExist()) {
+                val burnlist = burnListLiveData.value
+                    if (burnlist!=null && burnlist.isNotEmpty()) {
+                        interactor.startBurnEvent()
+                    } else {
+                        toastLiveData.postValue(Constants.BURNLIST_IS_NOT_FILLED_TEXT)
+                    }
+            } else {
+                toastLiveData.postValue(Constants.PROFILE_IS_NOT_FILLED_TEXT)
+            }
+        }
+    }
 
     private fun isBurnEventInProgress(burnEvent: BurnEvent?): Boolean {
         return (burnEvent!=null && burnEvent.eventStatus==Constants.BURN_EVENT_STATUS_IN_PROGRESS)

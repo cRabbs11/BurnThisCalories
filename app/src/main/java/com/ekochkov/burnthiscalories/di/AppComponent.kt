@@ -2,6 +2,7 @@ package com.ekochkov.burnthiscalories.di
 
 import com.ekochkov.burnthiscalories.di.modules.DataModule
 import com.ekochkov.burnthiscalories.di.modules.DomainModule
+import com.ekochkov.burnthiscalories.services.BurnEventForegroundService
 import com.ekochkov.burnthiscalories.viewModel.*
 import dagger.Component
 import javax.inject.Singleton
@@ -20,4 +21,5 @@ interface AppComponent {
     fun inject(mainActivityViewModel: MainActivityViewModel)
     fun inject(newProductViewModel: ProductFragmentViewModel)
     fun inject(burnEventFragmentViewModel: BurnEventFragmentViewModel)
+    fun inject(burnEventForegroundService: BurnEventForegroundService)
 }

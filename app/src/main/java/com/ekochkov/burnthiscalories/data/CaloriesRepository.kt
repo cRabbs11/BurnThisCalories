@@ -1,16 +1,10 @@
 package com.ekochkov.burnthiscalories.data
 
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
 import com.ekochkov.burnthiscalories.data.dao.ProfileDao
 import com.ekochkov.burnthiscalories.data.entity.*
 import com.ekochkov.burnthiscalories.util.Constants
-import com.ekochkov.burnthiscalories.services.BurnCaloriesService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 
 
 class CaloriesRepository(private val context: Context, private val profileDao: ProfileDao) {
@@ -79,20 +73,6 @@ class CaloriesRepository(private val context: Context, private val profileDao: P
         return calories
     }
 
-    fun startBurnService() {
-
-        //Создаем интент
-        MainScope().launch(Dispatchers.IO) {
-            val intent = Intent(context, BurnCaloriesService::class.java)
-            val bundle = Bundle()
-            bundle.putSerializable(Constants.PROFILE_KEY, getProfile())
-            bundle.putSerializable(Constants.BURN_LIST_KEY, burnList)
-            intent.putExtra(Constants.BUNDLE_KEY, bundle)
-            //Запускаем сервис, передав в метод интент
-            context.startService(intent)
-        }
-    }
-
     suspend fun saveBurnEvent(burnEvent: BurnEvent) {
         profileDao.saveBurnEvent(burnEvent)
     }
@@ -112,4 +92,8 @@ class CaloriesRepository(private val context: Context, private val profileDao: P
     fun getBurnEventFlow(id: Int) = profileDao.getBurnEventFlow(id)
 
     fun getBurnEventsByStatusFlow(eventStatus: Int) = profileDao.getBurnEventsByStatusFlow(eventStatus)
+
+    suspend fun getLastBurnEvent(): BurnEvent? {
+        return profileDao.getBurnEvents().last()
+    }
 }

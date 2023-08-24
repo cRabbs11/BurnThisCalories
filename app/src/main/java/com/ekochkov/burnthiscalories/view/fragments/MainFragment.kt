@@ -23,7 +23,6 @@ import com.ekochkov.burnthiscalories.data.entity.Product
 import com.ekochkov.burnthiscalories.databinding.FragmentMainBinding
 import com.ekochkov.burnthiscalories.diffs.ProductDiff
 import com.ekochkov.burnthiscalories.util.Constants
-import com.ekochkov.burnthiscalories.util.Constants.PROFILE_IS_NOT_FILLED_TEXT
 import com.ekochkov.burnthiscalories.util.OnItemClickListener
 import com.ekochkov.burnthiscalories.view.adapters.ProductListAdapter
 import com.ekochkov.burnthiscalories.view.fragments.ProductsFragment.Companion.FLAG_ADD_PRODUCTS_TO_BURN_EVENT
@@ -59,15 +58,13 @@ class MainFragment: Fragment() {
         val items = listOf("Option 1", "Option 2", "Option 3", "Option 4")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, items)
 
-        viewModel.profileStatusLiveData.observe(viewLifecycleOwner) {
-            if (it==Constants.PROFILE_IS_NOT_FILLED) {
-                showToast(PROFILE_IS_NOT_FILLED_TEXT)
-            }
+        viewModel.toastLiveData.observe(viewLifecycleOwner) { text ->
+            showToast(text)
         }
 
         productAdapter = ProductListAdapter(object: OnItemClickListener<Product> {
-            override fun onItemClick(t: Product) {
-
+            override fun onItemClick(product: Product) {
+                viewModel.removeProductFromBurnList(product)
             }
         })
         binding.recyclerView.adapter = productAdapter
@@ -112,13 +109,9 @@ class MainFragment: Fragment() {
             }
         }
 
-        viewModel.burnEventInProgress.observe(viewLifecycleOwner) {
-            burnEventInProgressId = if (it!=null) {
-                it.id
-            } else {
-                -1
-            }
-            updateButtons(it)
+        viewModel.burnEventInProgress.observe(viewLifecycleOwner) { burnEvent ->
+            burnEventInProgressId = burnEvent?.id ?: -1
+            updateButtons(burnEvent)
         }
     }
 

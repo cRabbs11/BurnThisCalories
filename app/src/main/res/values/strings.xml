@@ -17,6 +17,8 @@
     <string name="running">бегом</string>
     <string name="bicycle">на велосипеде</string>
     <string name="to_main">на главную</string>
+    <string name="stop">остановить</string>
+    <string name="resume">продолжить</string>
     <string name="to_burn_event_in_progress">К событию</string>
     <string name="set_product">выбрать продукты</string>
     <string name="burn_service_descr">Расчет сжигания калорий</string>

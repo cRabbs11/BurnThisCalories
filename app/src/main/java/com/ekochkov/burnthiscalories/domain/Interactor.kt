@@ -110,7 +110,7 @@ class Interactor(private val repository: CaloriesRepository, private val context
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun startBurnEvent(): Result<Unit> {
-        if (isProfileExist() && !isBurnEventRunning()) {
+        if (isProfileExist() && !isBurnEventServiceIsRunning) {
             burnEventJob = CoroutineScope(Job()).launch(Dispatchers.Default) {
                 val burnEvent = BurnEvent(
                     productsId = productToBurnList,
@@ -127,7 +127,7 @@ class Interactor(private val repository: CaloriesRepository, private val context
 
     suspend fun resumeBurnEvent(burnEventId: Int) {
         println("resume burning")
-        if (repository.ifProfileExist() && intent==null) {
+        if (!isBurnEventServiceIsRunning) {
             println("foreground service is not created, run it!")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(burnEventId)

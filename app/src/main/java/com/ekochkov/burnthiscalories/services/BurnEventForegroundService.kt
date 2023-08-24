@@ -18,17 +18,16 @@ import com.ekochkov.burnthiscalories.util.CaloriesCalculator
 import com.ekochkov.burnthiscalories.util.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class BurnEventForegroundService: Service(), SensorEventListener {
 
     companion object {
-        private var serviceIsRunning = false
+        private var serviceIsRunningFlow = MutableStateFlow(false)
 
-        fun isRunning(): Boolean {
-            return serviceIsRunning
-        }
+        fun isServiceRunningFlow() = serviceIsRunningFlow
     }
 
     @Inject
@@ -46,7 +45,9 @@ class BurnEventForegroundService: Service(), SensorEventListener {
     override fun onCreate() {
         super.onCreate()
         App.instance.dagger.inject(this)
-        serviceIsRunning = true
+        GlobalScope.launch {
+            serviceIsRunningFlow.emit(true)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -109,7 +110,9 @@ class BurnEventForegroundService: Service(), SensorEventListener {
     override fun onDestroy() {
         super.onDestroy()
         stopSensor()
-        serviceIsRunning = false
+        GlobalScope.launch {
+            serviceIsRunningFlow.emit(false)
+        }
     }
 
     private fun saveBurnEvent(status: Int, caloriesBurned: Int) {
